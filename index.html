@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- 외부 이미지 로딩 차단 방지 -->
+    <meta name="referrer" content="no-referrer">
+    <title>Choco Livery</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Montserrat:wght@200;300;400;500;600&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Noto Sans KR"', 'sans-serif'],
+                        logo: ['"Montserrat"', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            black: '#1a1a1a',
+                            gray: '#888888',
+                            500: '#3b82f6',
+                            fenix: '#e11d48', // Sharp Red
+                            pmdg: '#0284c7', // Sharp Blue
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #ffffff;
+            color: #1a1a1a;
+        }
+        .glass-nav {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid #f0f0f0;
+        }
+        /* Filter Tab Animation */
+        .filter-tab {
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .filter-tab::after {
+            content: '';
+            position: absolute;
+            bottom: -8px; /* Navbar height adjustment */
+            left: 0;
+            width: 0%;
+            height: 2px;
+            background-color: #1a1a1a;
+            transition: width 0.3s ease;
+        }
+        .filter-tab.active {
+            color: #1a1a1a;
+            font-weight: 600;
+        }
+        .filter-tab.active::after {
+            width: 100%;
+        }
+        
+        /* Card Hover */
+        .card-item {
+            transition: transform 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
+        .card-item:hover {
+            transform: translateY(-4px);
+        }
+
+        /* Modal Animation */
+        .modal-enter {
+            animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="antialiased min-h-screen flex flex-col pt-24 selection:bg-black selection:text-white">
+
+    <!-- Navbar -->
+    <nav class="glass-nav fixed w-full z-50 top-0 left-0 transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                <!-- Logo -->
+                <div class="flex-shrink-0 cursor-pointer group" onclick="window.scrollTo(0,0)">
+                    <span class="font-logo font-light text-2xl tracking-[0.2em] text-gray-400 group-hover:text-black transition-colors duration-500">
+                        CHOCO<span class="font-medium text-black">LIVERY</span>
+                    </span>
+                </div>
+                
+                <!-- Right Side -->
+                <div class="hidden md:block">
+                     <span class="font-logo text-xs tracking-widest text-gray-400">For MSFS2024</span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-grow max-w-7xl mx-auto px-6 lg:px-8 pb-20 w-full" id="featured">
+        <!-- Header & Filters (Clean Layout) -->
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-8 mb-12 border-b border-gray-100 pb-4">
+            <!-- Filter Tabs -->
+            <div class="flex gap-8">
+                <button onclick="filterItems('all')" id="btn-all" class="filter-tab active font-logo text-sm tracking-widest text-gray-400 hover:text-black uppercase">
+                    All Collection
+                </button>
+                <button onclick="filterItems('pmdg')" id="btn-pmdg" class="filter-tab font-logo text-sm tracking-widest text-gray-400 hover:text-brand-pmdg uppercase">
+                    PMDG 737
+                </button>
+                <button onclick="filterItems('fenix')" id="btn-fenix" class="filter-tab font-logo text-sm tracking-widest text-gray-400 hover:text-brand-fenix uppercase">
+                    FENIX A321
+                </button>
+            </div>
+        </div>
+
+        <!-- Grid Container -->
+        <div id="liveryGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12">
+            <!-- Cards will be injected here by JS -->
+        </div>
+
+        <!-- Empty State Message -->
+        <div id="emptyState" class="hidden py-32 text-center w-full">
+            <div class="text-gray-300 mb-4 text-6xl font-thin">/</div>
+            <p class="font-logo text-gray-400 tracking-widest text-sm uppercase">No Livery Found</p>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-gray-100 mt-auto bg-white">
+        <div class="max-w-7xl mx-auto py-10 px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-4">
+            <!-- Footer Content Removed -->
+        </div>
+    </footer>
+
+    <!-- Download Warning Modal (Minimal Design) -->
+    <div id="downloadModal" class="fixed inset-0 z-[100] flex items-center justify-center hidden bg-white/80 backdrop-blur-md px-4 transition-opacity duration-300">
+        <div class="bg-white w-full max-w-lg shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] border border-gray-100 p-8 md:p-10 modal-enter relative">
+            <!-- Close Button -->
+            <button onclick="closeModal()" class="absolute top-6 right-6 text-gray-400 hover:text-black transition-colors">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+
+            <!-- Header -->
+            <div class="mb-8">
+                <h3 class="font-logo font-light text-2xl text-black mb-2">DOWNLOAD</h3>
+                <div class="h-0.5 w-12 bg-black"></div>
+            </div>
+            
+            <!-- Content -->
+            <div class="space-y-6 mb-10">
+                <div class="space-y-2">
+                    <p class="font-bold text-sm text-red-600 uppercase tracking-wide flex items-center gap-2">
+                        <i class="fa-solid fa-ban"></i> Warning
+                    </p>
+                    <p class="text-sm text-gray-600 font-light leading-relaxed">
+                        이 파일의 <span class="font-medium text-black">무단 수정 및 재배포를 엄격히 금지</span>합니다.<br>
+                        개인적인 용도로만 사용해주시기 바랍니다.
+                    </p>
+                </div>
+                
+                <div class="space-y-2 pt-4 border-t border-gray-100">
+                    <p class="font-bold text-sm text-black uppercase tracking-wide flex items-center gap-2">
+                        <i class="fa-solid fa-info-circle text-gray-400"></i> How to Install
+                    </p>
+                    <p class="text-sm text-gray-600 font-light leading-relaxed">
+                        1. 파일을 다운로드 후 압축을 해제하세요.<br>
+                        2. 폴더를 <span class="font-mono text-xs bg-gray-100 px-1 py-0.5 text-black">Community</span> 경로에 넣으세요.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Action Button -->
+            <button onclick="confirmDownload()" class="w-full bg-black text-white h-12 hover:bg-gray-800 transition-colors duration-300 font-logo text-sm font-medium tracking-widest uppercase flex items-center justify-center gap-3 group">
+                Agree & Download
+                <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- JavaScript Logic -->
+    <script>
+        // Data Configuration
+        const liveries = [
+            {
+                id: 1,
+                title: "Jeju Air HL8089",
+                addon: "PMDG 737-800",
+                link: "https://drive.google.com/file/d/1jNjPL31WTg0t606XbLwWwzixkyk0a2oW/view", 
+                image: "https://drive.google.com/file/d/1jig7jVsZjRMWUaPuRQmY4ZK2JyhbwLZI/view?usp=sharing", 
+                type: "pmdg",
+                version: "v1.0"
+            },
+            {
+                id: 2,
+                title: "Jeju Air HL8336",
+                addon: "PMDG 737-800",
+                link: "https://drive.google.com/file/d/1TYnGKAFDQYFBcHYgfNUGV22WFQ7E_1aI/view", 
+                image: "https://drive.google.com/file/d/172pSg3pVQKkti562G6xNuFQ6dNC2SMCh/view?usp=sharing",
+                type: "pmdg",
+                version: "v1.0"
+            },
+            {
+                id: 3,
+                title: "Jeju Air HL8337",
+                addon: "PMDG 737-800",
+                link: "https://drive.google.com/file/d/10vcs9vhEeC2PTQ4DKgiV0EZLY79yL16o/view", 
+                image: "https://drive.google.com/file/d/1DqoQT9oIZiOigkR2H5QDmYEJ5erbimF8/view?usp=sharing",
+                type: "pmdg",
+                version: "v1.0"
+            },
+            {
+                id: 4,
+                title: "Jin Air HL8012",
+                addon: "PMDG 737-800",
+                link: "https://drive.google.com/file/d/1TAHJ9hWxAWpCbMD3dY1clOZN0pg7wxbT/view", 
+                image: "https://drive.google.com/file/d/165v-ErV67hYxS7VMV7P2BiCgm-DsibhL/view?usp=sharing",
+                type: "pmdg",
+                version: "v1.0"
+            },
+            {
+                id: 5,
+                title: "Asiana Airlines HL8060",
+                addon: "FENIX A321-200",
+                link: "https://drive.google.com/file/d/1pqzyPAMWKRN_nyXaUZC9WYg59mgkLrYj/view", 
+                image: "https://drive.google.com/file/d/13PT2YyWGwZzGbc1CXV7RQkw7Oh1x6m0M/view?usp=sharing", 
+                type: "fenix",
+                version: "v1.0"
+            }
+        ];
+
+        const grid = document.getElementById('liveryGrid');
+        const emptyState = document.getElementById('emptyState');
+        const modal = document.getElementById('downloadModal');
+        let currentLink = ''; 
+
+        const buttons = {
+            all: document.getElementById('btn-all'),
+            pmdg: document.getElementById('btn-pmdg'),
+            fenix: document.getElementById('btn-fenix')
+        };
+
+        // Filter Function
+        function filterItems(type) {
+            // Update Tab Styles
+            Object.keys(buttons).forEach(key => {
+                const btn = buttons[key];
+                btn.classList.remove('active', 'text-black', 'border-black');
+                btn.classList.add('text-gray-400');
+                
+                // Add specific hover colors back if needed
+                if (key === 'pmdg') btn.classList.remove('text-brand-pmdg');
+                if (key === 'fenix') btn.classList.remove('text-brand-fenix');
+            });
+            
+            const activeBtn = buttons[type];
+            activeBtn.classList.remove('text-gray-400');
+            activeBtn.classList.add('active'); // active class handles underline
+
+            // Filter Data
+            let filteredData = liveries;
+            if (type !== 'all') {
+                filteredData = liveries.filter(item => item.type === type);
+            }
+            renderLiveries(filteredData);
+        }
+
+        // Modal Logic
+        window.openLink = (link) => {
+            if (!link) {
+                alert("링크 준비중입니다.");
+                return;
+            }
+            currentLink = link;
+            modal.classList.remove('hidden');
+        }
+
+        window.closeModal = () => {
+            modal.classList.add('hidden');
+            currentLink = ''; 
+        }
+
+        window.confirmDownload = () => {
+            if (currentLink) {
+                window.open(currentLink, '_blank');
+                closeModal();
+            }
+        }
+
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                closeModal();
+            }
+        });
+
+        // Google Drive Thumbnail Logic
+        function convertImageUrl(url) {
+            if (!url) return "https://placehold.co/800x450?text=No+Image";
+            if (url.includes('drive.google.com')) {
+                let id = '';
+                const parts = url.match(/\/d\/(.*?)\//);
+                if (parts && parts[1]) id = parts[1];
+                else if (url.includes('id=')) id = url.split('id=')[1].split('&')[0];
+                if (id) return `https://drive.google.com/thumbnail?id=${id}&sz=w1920`;
+            }
+            return url;
+        }
+
+        // Render Function (Modern Minimalist Card)
+        function renderLiveries(data) {
+            grid.innerHTML = '';
+            
+            if (data.length === 0) {
+                emptyState.classList.remove('hidden');
+                grid.classList.add('hidden');
+                return;
+            } else {
+                emptyState.classList.add('hidden');
+                grid.classList.remove('hidden');
+            }
+
+            data.forEach(item => {
+                const imageUrl = convertImageUrl(item.image);
+                // Badge color based on type
+                const badgeColor = item.type === 'pmdg' ? 'text-brand-pmdg' : 'text-brand-fenix';
+
+                const card = document.createElement('div');
+                card.className = 'card-item group bg-white'; 
+                // Removed borders/shadows from container, focus on image and typography
+
+                card.innerHTML = `
+                    <div class="relative aspect-video overflow-hidden bg-gray-50 mb-4 cursor-pointer" onclick="openLink('${item.link}')">
+                        <img src="${imageUrl}" alt="${item.title}" class="w-full h-full object-cover grayscale-[20%] group-hover:grayscale-0 transition-all duration-500 ease-out" referrerpolicy="no-referrer">
+                        
+                        <!-- Minimal Overlay -->
+                        <div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300"></div>
+                        
+                        <!-- Floating Download Icon -->
+                        <div class="absolute bottom-4 right-4 opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0 transition-all duration-300">
+                            <div class="w-10 h-10 bg-white flex items-center justify-center shadow-lg hover:bg-black hover:text-white transition-colors">
+                                <i class="fa-solid fa-arrow-down"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col gap-1">
+                        <!-- Meta Info -->
+                        <div class="flex justify-between items-center mb-1">
+                            <span class="font-logo text-[10px] font-bold tracking-widest uppercase ${badgeColor}">
+                                ${item.addon}
+                            </span>
+                            <span class="font-logo text-[10px] text-gray-400">
+                                ${item.version || 'V1.0'}
+                            </span>
+                        </div>
+
+                        <!-- Title -->
+                        <h3 class="text-lg font-light text-black truncate group-hover:underline decoration-1 underline-offset-4 cursor-pointer" onclick="openLink('${item.link}')">
+                            ${item.title}
+                        </h3>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        renderLiveries(liveries);
+    </script>
+</body>
+</html>
