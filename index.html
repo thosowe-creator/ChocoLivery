@@ -17,7 +17,7 @@
             theme: {
                 extend: {
                     fontFamily: {
-                        sans: ['"Montserrat"', 'sans-serif'], // Main font changed to Montserrat for English consistecy
+                        sans: ['"Montserrat"', 'sans-serif'], 
                         logo: ['"Montserrat"', 'sans-serif'],
                     },
                     colors: {
@@ -78,7 +78,6 @@
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
-        /* Custom Input Style */
         .input-sharp {
             width: 100%;
             border: 1px solid #e5e7eb;
@@ -92,7 +91,6 @@
             border-color: #1a1a1a;
             background: white;
         }
-        /* Scrollbar for admin dash */
         ::-webkit-scrollbar {
             width: 8px;
         }
@@ -106,7 +104,6 @@
         ::-webkit-scrollbar-thumb:hover {
             background: #aaa; 
         }
-        /* Toast Notification Styles */
         #toast-container {
             position: fixed;
             bottom: 30px;
@@ -115,7 +112,7 @@
             display: flex;
             flex-direction: column;
             gap: 12px;
-            pointer-events: none; /* Allows clicking through container */
+            pointer-events: none;
         }
         .toast {
             pointer-events: auto;
@@ -135,15 +132,9 @@
             animation: slideInToast 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
             border-radius: 4px;
         }
-        .toast.error {
-            border-left: 3px solid #e11d48;
-        }
-        .toast.success {
-            border-left: 3px solid #3b82f6;
-        }
-        .toast.normal {
-            border-left: 3px solid #9ca3af;
-        }
+        .toast.error { border-left: 3px solid #e11d48; }
+        .toast.success { border-left: 3px solid #3b82f6; }
+        .toast.normal { border-left: 3px solid #9ca3af; }
         @keyframes slideInToast {
             from { transform: translateX(100%); opacity: 0; }
             to { transform: translateX(0); opacity: 1; }
@@ -151,7 +142,6 @@
         @keyframes fadeOutToast {
             to { opacity: 0; transform: translateY(10px); }
         }
-        /* Completed Request Style */
         .req-item.completed {
             opacity: 0.5;
             background-color: #f9fafb;
@@ -159,6 +149,18 @@
         .req-item.completed h4 {
             text-decoration: line-through;
             color: #9ca3af;
+        }
+        .admin-tab-btn {
+            padding: 8px 16px;
+            border-bottom: 2px solid transparent;
+            color: #888;
+            font-weight: 600;
+            font-size: 0.875rem;
+            transition: all 0.2s;
+        }
+        .admin-tab-btn.active {
+            border-bottom-color: #1a1a1a;
+            color: #1a1a1a;
         }
     </style>
 </head>
@@ -168,14 +170,11 @@
     <nav class="glass-nav fixed w-full z-50 top-0 left-0 transition-all duration-300">
         <div class="max-w-7xl mx-auto px-6 lg:px-8">
             <div class="flex items-center justify-between h-20">
-                <!-- Logo -->
                 <div class="flex-shrink-0 cursor-pointer group" onclick="window.scrollTo(0,0)">
                     <span class="font-logo font-light text-2xl tracking-[0.2em] text-gray-400 group-hover:text-black transition-colors duration-500">
                         CHOCO<span class="font-medium text-black">LIVERY</span>
                     </span>
                 </div>
-                
-                <!-- Right Side: Request Button -->
                 <div class="flex items-center">
                      <button onclick="openRequestModal()" class="font-logo text-xs font-bold tracking-widest text-black border border-black px-4 py-2 hover:bg-black hover:text-white transition-colors uppercase">
                         Request Livery
@@ -187,9 +186,7 @@
 
     <!-- Main Content -->
     <main class="flex-grow max-w-7xl mx-auto px-6 lg:px-8 pb-20 w-full" id="featured">
-        <!-- Header & Filters -->
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-8 mb-12 border-b border-gray-100 pb-4">
-            <!-- Filter Tabs -->
             <div class="flex gap-8">
                 <button onclick="filterItems('all')" id="btn-all" class="filter-tab active font-logo text-sm tracking-widest text-gray-400 hover:text-black uppercase">
                     ALL
@@ -203,12 +200,11 @@
             </div>
         </div>
 
-        <!-- Grid Container -->
         <div id="liveryGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12">
-            <!-- Cards will be injected here by JS -->
+            <!-- Loading State -->
+            <div class="col-span-full text-center py-20 text-gray-400 text-sm font-logo tracking-widest animate-pulse">LOADING DATA...</div>
         </div>
 
-        <!-- Empty State Message -->
         <div id="emptyState" class="hidden py-32 text-center w-full">
             <div class="text-gray-300 mb-4 text-6xl font-thin">/</div>
             <p class="font-logo text-gray-400 tracking-widest text-sm uppercase">No Livery Found</p>
@@ -218,7 +214,6 @@
     <!-- Footer -->
     <footer class="border-t border-gray-100 mt-auto bg-white">
         <div class="max-w-7xl mx-auto py-10 px-6 lg:px-8 flex justify-end items-center gap-4">
-            <!-- Admin Trigger -->
             <button onclick="openAdminLogin()" class="text-gray-300 hover:text-black transition-colors" title="Admin Access">
                 <i class="fa-solid fa-lock text-xs"></i>
             </button>
@@ -257,33 +252,25 @@
         </div>
     </div>
 
-    <!-- 2. Request Modal (English Updated) -->
+    <!-- 2. Request Modal -->
     <div id="requestModal" class="fixed inset-0 z-[100] flex items-center justify-center hidden bg-white/80 backdrop-blur-md px-4 py-4 overflow-y-auto">
         <div class="bg-white w-full max-w-lg shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] border border-gray-100 p-8 md:p-10 modal-enter relative my-auto">
             <button onclick="closeModal('requestModal')" class="absolute top-6 right-6 text-gray-400 hover:text-black"><i class="fa-solid fa-xmark text-xl"></i></button>
             <div class="mb-2"><h3 class="font-logo font-light text-2xl text-black mb-2">REQUEST LIVERY</h3><div class="h-0.5 w-12 bg-black"></div></div>
             <p class="text-xs text-red-500 text-right mb-6 font-bold">* Indicates required field</p>
-            
             <div class="space-y-4 mb-8">
-                <!-- 1. Aircraft Type -->
                 <div>
                     <label class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1 block">1. Aircraft Type <span class="text-red-500">*</span></label>
                     <input type="text" id="reqAircraft" class="input-sharp" placeholder="ex) PMDG 737-800">
                 </div>
-                
-                <!-- 2. Airline Name -->
                 <div>
                     <label class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1 block">2. Airline Name <span class="text-red-500">*</span></label>
                     <input type="text" id="reqAirline" class="input-sharp" placeholder="ex) Jeju Air">
                 </div>
-
-                <!-- 3. Aircraft Reg -->
                 <div>
                     <label class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1 block">3. Aircraft Reg. <span class="text-red-500">*</span></label>
                     <input type="text" id="reqReg" class="input-sharp" placeholder="ex) HL8089">
                 </div>
-
-                <!-- 4. Reference Images -->
                 <div>
                     <label class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1 block">4. Reference Images (Min 1, Max 5) <span class="text-red-500">*</span></label>
                     <div class="space-y-2">
@@ -294,8 +281,6 @@
                         <input type="text" class="input-sharp req-img-input" placeholder="Link 5 (Optional)">
                     </div>
                 </div>
-
-                <!-- 5. Details -->
                 <div>
                     <label class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1 block">5. Details</label>
                     <textarea id="reqDesc" class="input-sharp h-24 resize-none" placeholder="Any specific details or requests?"></textarea>
@@ -324,401 +309,107 @@
     <!-- 4. Admin Dashboard Modal -->
     <div id="adminDashModal" class="fixed inset-0 z-[100] flex items-center justify-center hidden bg-gray-50/90 backdrop-blur-md px-4 py-10">
         <div class="bg-white w-full max-w-4xl h-full max-h-[80vh] shadow-2xl border border-gray-200 rounded-lg flex flex-col modal-enter relative overflow-hidden">
-            <!-- Dash Header -->
+            <!-- Header -->
             <div class="p-6 border-b border-gray-100 flex justify-between items-center bg-white sticky top-0 z-10">
-                <div><h3 class="font-logo font-bold text-lg text-black">REQUEST LIST</h3><p class="text-xs text-gray-400 mt-1">Real-time requests from users</p></div>
+                <div class="flex items-center gap-6">
+                    <h3 class="font-logo font-bold text-lg text-black">ADMIN DASHBOARD</h3>
+                    <div class="flex gap-4">
+                        <button onclick="switchAdminTab('requests')" id="tab-requests" class="admin-tab-btn active">Requests</button>
+                        <button onclick="switchAdminTab('liveries')" id="tab-liveries" class="admin-tab-btn">Liveries</button>
+                    </div>
+                </div>
                 <div class="flex gap-3">
                     <button onclick="logoutAdmin()" class="text-xs font-bold text-red-500 hover:text-red-700 uppercase">Logout</button>
                     <button onclick="closeModal('adminDashModal')" class="text-gray-400 hover:text-black"><i class="fa-solid fa-xmark text-xl"></i></button>
                 </div>
             </div>
-            <!-- Dash Content -->
-            <div class="flex-grow overflow-y-auto p-6 bg-gray-50" id="requestListContainer">
-                <!-- Request Items will be here -->
-                <div class="text-center text-gray-400 py-10 text-sm">Loading requests...</div>
+            
+            <!-- Content Area -->
+            <div class="flex-grow overflow-y-auto p-6 bg-gray-50 relative">
+                <!-- Tab: Requests -->
+                <div id="view-requests">
+                    <div id="requestListContainer"><div class="text-center text-gray-400 py-10 text-sm">Loading requests...</div></div>
+                </div>
+
+                <!-- Tab: Liveries -->
+                <div id="view-liveries" class="hidden">
+                    <div class="flex justify-between items-center mb-6">
+                        <h4 class="font-bold text-sm text-gray-600">MANAGE LIVERIES</h4>
+                        <!-- Seed button removed as requested -->
+                        <button onclick="openUploadModal()" class="bg-black hover:bg-gray-800 text-white px-4 py-2 rounded text-xs font-bold uppercase transition-colors">
+                            <i class="fa-solid fa-plus mr-1"></i> Add New Livery
+                        </button>
+                    </div>
+                    <div id="liveryListContainer"><div class="text-center text-gray-400 py-10 text-sm">Loading liveries...</div></div>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- Firebase Logic (Module) -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getFirestore, collection, addDoc, getDocs, deleteDoc, updateDoc, doc, Timestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-        import { getAuth, signInWithEmailAndPassword, signOut, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyB8Nn-SCdjfA_H-8hi_660UsjwTtxc0x8M",
-            authDomain: "choco-livery-db.firebaseapp.com",
-            projectId: "choco-livery-db",
-            storageBucket: "choco-livery-db.firebasestorage.app",
-            messagingSenderId: "480683436152",
-            appId: "1:480683436152:web:8ca6284e189d6ae5bae58d"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-        const auth = getAuth(app);
-
-        // Auto Login Anonymously
-        signInAnonymously(auth).catch((error) => {
-            console.error("Anon Auth Error", error);
-            if (error.code === 'auth/admin-restricted-operation') {
-                showToast("⚠️ Config Error: Please enable 'Anonymous' login in Firebase Console.", "error");
-            }
-        });
-
-        // --- Toast Function (New!) ---
-        window.showToast = (msg, type = 'normal') => {
-            const container = document.getElementById('toast-container');
-            const toast = document.createElement('div');
-            toast.className = `toast ${type}`;
+    <!-- 5. Upload Livery Modal -->
+    <div id="uploadModal" class="fixed inset-0 z-[100] flex items-center justify-center hidden bg-white/80 backdrop-blur-md px-4 py-4 overflow-y-auto">
+        <div class="bg-white w-full max-w-lg shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] border border-gray-100 p-8 md:p-10 modal-enter relative my-auto">
+            <button onclick="closeModal('uploadModal')" class="absolute top-6 right-6 text-gray-400 hover:text-black"><i class="fa-solid fa-xmark text-xl"></i></button>
+            <div class="mb-6"><h3 class="font-logo font-light text-2xl text-black mb-2">UPLOAD LIVERY</h3><div class="h-0.5 w-12 bg-black"></div></div>
             
-            let icon = '';
-            if(type === 'error') icon = '<i class="fa-solid fa-circle-exclamation text-red-500 text-lg"></i>';
-            else if(type === 'success') icon = '<i class="fa-solid fa-circle-check text-blue-500 text-lg"></i>';
-            else icon = '<i class="fa-solid fa-bell text-gray-400 text-lg"></i>';
-            
-            toast.innerHTML = `${icon}<span>${msg}</span>`;
-            container.appendChild(toast);
-            
-            // Auto remove
-            setTimeout(() => {
-                toast.style.animation = 'fadeOutToast 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards';
-                toast.addEventListener('animationend', () => toast.remove());
-            }, 3000);
-        };
+            <div class="space-y-4 mb-8">
+                <div>
+                    <label class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1 block">Title (e.g. Jeju Air HL8089)</label>
+                    <input type="text" id="upTitle" class="input-sharp">
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1 block">Addon (e.g. PMDG 737-800)</label>
+                        <input type="text" id="upAddon" class="input-sharp">
+                    </div>
+                    <div>
+                        <label class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1 block">Type</label>
+                        <select id="upType" class="input-sharp">
+                            <option value="pmdg">PMDG</option>
+                            <option value="fenix">FENIX</option>
+                        </select>
+                    </div>
+                </div>
+                <div>
+                    <label class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1 block">Version (e.g. v1.0)</label>
+                    <input type="text" id="upVersion" class="input-sharp" value="v1.0">
+                </div>
+                <div>
+                    <label class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1 block">Download Link (Google Drive)</label>
+                    <input type="text" id="upLink" class="input-sharp">
+                </div>
+                <div>
+                    <label class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1 block">Image Link (Google Drive)</label>
+                    <input type="text" id="upImage" class="input-sharp">
+                </div>
+                <div>
+                    <label class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1 block">More Screenshots Link (Optional)</label>
+                    <input type="text" id="upMoreLink" class="input-sharp">
+                </div>
+            </div>
+            <button onclick="submitLivery()" id="uploadBtn" class="w-full bg-black text-white h-12 hover:bg-gray-800 transition-colors duration-300 font-logo text-sm font-medium tracking-widest uppercase">Upload</button>
+        </div>
+    </div>
 
-        // --- Global Functions ---
-        window.submitRequest = async () => {
-            const aircraft = document.getElementById('reqAircraft').value.trim();
-            const airline = document.getElementById('reqAirline').value.trim();
-            const reg = document.getElementById('reqReg').value.trim();
-            const desc = document.getElementById('reqDesc').value.trim();
-            const imgInputs = document.querySelectorAll('.req-img-input');
-            const btn = document.getElementById('submitBtn');
+    <!-- 6. Delete Confirmation Modal -->
+    <div id="deleteConfirmModal" class="fixed inset-0 z-[200] flex items-center justify-center hidden bg-black/50 backdrop-blur-sm px-4">
+        <div class="bg-white w-full max-w-sm shadow-2xl border border-gray-100 p-6 rounded-lg modal-enter relative">
+            <div class="text-center mb-6">
+                <i class="fa-solid fa-triangle-exclamation text-3xl text-red-500 mb-3"></i>
+                <h3 class="font-logo font-bold text-lg text-black">DELETE CONFIRMATION</h3>
+                <p class="text-xs text-gray-500 mt-2">Are you sure you want to delete this item?<br>This action cannot be undone.</p>
+            </div>
+            <div class="flex gap-3">
+                <button onclick="closeModal('deleteConfirmModal')" class="flex-1 h-10 border border-gray-300 text-gray-600 text-xs font-bold uppercase rounded hover:bg-gray-50">Cancel</button>
+                <button onclick="confirmDeleteAction()" class="flex-1 h-10 bg-red-600 text-white text-xs font-bold uppercase rounded hover:bg-red-700">Delete</button>
+            </div>
+        </div>
+    </div>
 
-            const images = [];
-            imgInputs.forEach(input => {
-                if (input.value.trim()) images.push(input.value.trim());
-            });
-
-            if(!aircraft || !airline || !reg || images.length === 0) {
-                showToast("Please fill in all required fields.", "error");
-                return;
-            }
-
-            btn.innerText = "Saving...";
-            btn.disabled = true;
-
-            try {
-                if (!auth.currentUser) await signInAnonymously(auth);
-
-                await addDoc(collection(db, "requests"), {
-                    aircraft: aircraft,
-                    airline: airline,
-                    reg: reg,
-                    images: images,
-                    description: desc,
-                    completed: false, // Default status
-                    createdAt: Timestamp.now()
-                });
-                
-                showToast("Request submitted successfully!", "success");
-                closeModal('requestModal');
-                
-                document.getElementById('reqAircraft').value = '';
-                document.getElementById('reqAirline').value = '';
-                document.getElementById('reqReg').value = '';
-                document.getElementById('reqDesc').value = '';
-                imgInputs.forEach(input => input.value = '');
-
-            } catch (e) {
-                console.error("Error adding document: ", e);
-                showToast("Error occurred: " + e.message, "error");
-            } finally {
-                btn.innerText = "SUBMIT REQUEST";
-                btn.disabled = false;
-            }
-        };
-
-        window.loginAdmin = async () => {
-            const email = document.getElementById('adminEmail').value;
-            const pw = document.getElementById('adminPw').value;
-
-            if(!email || !pw) return showToast("Please enter email and password.", "error");
-
-            try {
-                await signInWithEmailAndPassword(auth, email, pw);
-                closeModal('adminLoginModal');
-                openAdminDashboard();
-                showToast("Logged in as Admin.", "success");
-            } catch (error) {
-                showToast("Login failed: " + error.message, "error");
-            }
-        };
-
-        window.logoutAdmin = async () => {
-            await signOut(auth);
-            closeModal('adminDashModal');
-            
-            // Clear inputs (Security)
-            document.getElementById('adminEmail').value = '';
-            document.getElementById('adminPw').value = '';
-
-            showToast("Logged out.", "success");
-            signInAnonymously(auth).catch(e => console.log(e));
-        };
-
-        // --- Admin Actions (Delete & Toggle) ---
-        window.toggleComplete = async (id, currentStatus) => {
-            try {
-                const reqRef = doc(db, "requests", id);
-                await updateDoc(reqRef, { completed: !currentStatus });
-                openAdminDashboard(); // Refresh list
-                const msg = !currentStatus ? "Request Completed" : "Request Pending";
-                showToast(msg, "success");
-            } catch(e) {
-                showToast("Status update failed: " + e.message, "error");
-            }
-        };
-
-        window.deleteRequest = async (id) => {
-            if(!window.confirm("Are you sure you want to delete this request?")) return;
-            try {
-                await deleteDoc(doc(db, "requests", id));
-                openAdminDashboard(); // Refresh list
-                showToast("Request deleted.", "success");
-            } catch(e) {
-                console.error("Delete Error:", e);
-                if (e.code === 'permission-denied') {
-                    alert("삭제 실패: 권한이 없습니다. Firebase Console의 Firestore Rules를 확인하거나 관리자 계정으로 로그인되어 있는지 확인하세요.");
-                } else {
-                    showToast("Delete failed: " + e.message, "error");
-                }
-            }
-        };
-
-        // Load Requests
-        window.openAdminDashboard = async () => {
-            const user = auth.currentUser;
-            if (!user || user.isAnonymous) {
-                showToast("No admin permission.", "error");
-                openAdminLogin();
-                return;
-            }
-
-            document.getElementById('adminDashModal').classList.remove('hidden');
-            const listContainer = document.getElementById('requestListContainer');
-            listContainer.innerHTML = '<div class="text-center text-gray-400 py-10 text-sm">Loading requests...</div>';
-
-            try {
-                const querySnapshot = await getDocs(collection(db, "requests"));
-                const requests = [];
-                querySnapshot.forEach((doc) => {
-                    requests.push({ id: doc.id, ...doc.data() });
-                });
-
-                requests.sort((a, b) => b.createdAt.seconds - a.createdAt.seconds);
-
-                if (requests.length === 0) {
-                    listContainer.innerHTML = '<div class="text-center text-gray-400 py-10 text-sm">No requests found.</div>';
-                    return;
-                }
-
-                let html = '';
-                requests.forEach(req => {
-                    const date = new Date(req.createdAt.seconds * 1000).toLocaleString('en-US');
-                    
-                    let imageLinksHtml = '';
-                    if (req.images && req.images.length > 0) {
-                        imageLinksHtml = `<div class="mt-2 flex flex-wrap gap-2">`;
-                        req.images.forEach((img, index) => {
-                            imageLinksHtml += `<a href="${img}" target="_blank" class="text-xs bg-gray-100 px-2 py-1 rounded text-blue-600 hover:underline"><i class="fa-solid fa-link"></i> Img ${index + 1}</a>`;
-                        });
-                        imageLinksHtml += `</div>`;
-                    } else if (req.imageLink) {
-                        imageLinksHtml = `<a href="${req.imageLink}" target="_blank" class="text-xs bg-gray-100 px-2 py-1 rounded text-blue-600 hover:underline mt-2 inline-block"><i class="fa-solid fa-link"></i> Reference Image</a>`;
-                    }
-
-                    // Completed Style Logic
-                    const isCompleted = req.completed === true;
-                    const containerClass = isCompleted ? 'req-item completed' : 'req-item';
-                    const btnClass = isCompleted ? 'bg-green-500 text-white' : 'bg-gray-200 text-gray-600 hover:bg-gray-300';
-                    const btnText = isCompleted ? 'Completed' : 'Pending';
-
-                    html += `
-                        <div class="${containerClass} bg-white p-5 rounded-lg shadow-sm border border-gray-100 mb-4 hover:shadow-md transition-all relative">
-                            <!-- Action Buttons (Top Right) -->
-                            <div class="absolute top-5 right-5 flex gap-2">
-                                <button onclick="toggleComplete('${req.id}', ${isCompleted})" class="text-[10px] font-bold px-2 py-1 rounded uppercase transition-colors ${btnClass}">
-                                    ${btnText}
-                                </button>
-                                <button onclick="deleteRequest('${req.id}')" class="text-[10px] font-bold px-2 py-1 rounded uppercase bg-red-50 text-red-500 hover:bg-red-100 hover:text-red-700">
-                                    Delete
-                                </button>
-                            </div>
-
-                            <div class="flex justify-between items-start mb-2 pr-24">
-                                <div class="flex gap-2">
-                                    <span class="bg-black text-white text-[10px] font-bold px-2 py-1 rounded-sm uppercase tracking-wider">${req.aircraft}</span>
-                                    <span class="bg-gray-200 text-gray-700 text-[10px] font-bold px-2 py-1 rounded-sm uppercase tracking-wider">${req.reg}</span>
-                                </div>
-                            </div>
-                            <span class="text-xs text-gray-400 block mb-1">${date}</span>
-                            <h4 class="font-bold text-lg text-gray-900 mb-1">${req.airline}</h4>
-                            ${req.description ? `<p class="text-sm text-gray-600 mb-3 bg-gray-50 p-3 rounded block border border-gray-100 whitespace-pre-wrap">${req.description}</p>` : ''}
-                            ${imageLinksHtml}
-                        </div>
-                    `;
-                });
-                listContainer.innerHTML = html;
-
-            } catch (error) {
-                console.error("Error getting docs: ", error);
-                showToast("Failed to load data.", "error");
-            }
-        };
-
-        window.openAdminLogin = () => {
-            const user = auth.currentUser;
-            if(user && !user.isAnonymous) {
-                openAdminDashboard();
-            } else {
-                document.getElementById('adminLoginModal').classList.remove('hidden');
-            }
-        };
-    </script>
-
-    <!-- UI Logic (Non-Module) -->
+    <!-- UI Helpers Script (Runs before module to be safe) -->
     <script>
-        // ... (Existing Data Configuration & Render Logic - Unchanged) ...
-        const liveries = [
-            {
-                id: 1,
-                title: "Jeju Air HL8089",
-                addon: "PMDG 737-800",
-                link: "https://drive.google.com/file/d/1jNjPL31WTg0t606XbLwWwzixkyk0a2oW/view", 
-                image: "https://drive.google.com/file/d/1jig7jVsZjRMWUaPuRQmY4ZK2JyhbwLZI/view?usp=sharing", 
-                moreLink: "https://cafe.naver.com/msfs2020?iframe_url_utf8=%2FArticleRead.nhn%253Fclubid%3D29973344%2526articleid%3D70794", 
-                type: "pmdg",
-                version: "v1.0"
-            },
-            {
-                id: 2,
-                title: "Jeju Air HL8336",
-                addon: "PMDG 737-800",
-                link: "https://drive.google.com/file/d/1TYnGKAFDQYFBcHYgfNUGV22WFQ7E_1aI/view", 
-                image: "https://drive.google.com/file/d/172pSg3pVQKkti562G6xNuFQ6dNC2SMCh/view?usp=sharing",
-                moreLink: "https://cafe.naver.com/msfs2020?iframe_url_utf8=%2FArticleRead.nhn%253Fclubid%3D29973344%2526articleid%3D70673",
-                type: "pmdg",
-                version: "v1.0"
-            },
-            {
-                id: 3,
-                title: "Jeju Air HL8337",
-                addon: "PMDG 737-800",
-                link: "https://drive.google.com/file/d/10vcs9vhEeC2PTQ4DKgiV0EZLY79yL16o/view", 
-                image: "https://drive.google.com/file/d/1DqoQT9oIZiOigkR2H5QDmYEJ5erbimF8/view?usp=sharing",
-                moreLink: "https://cafe.naver.com/msfs2020?iframe_url_utf8=%2FArticleRead.nhn%253Fclubid%3D29973344%2526articleid%3D70584",
-                type: "pmdg",
-                version: "v1.0"
-            },
-            {
-                id: 4,
-                title: "Jin Air HL8012",
-                addon: "PMDG 737-800",
-                link: "https://drive.google.com/file/d/1TAHJ9hWxAWpCbMD3dY1clOZN0pg7wxbT/view", 
-                image: "https://drive.google.com/file/d/165v-ErV67hYxS7VMV7P2BiCgm-DsibhL/view?usp=sharing",
-                moreLink: "https://cafe.naver.com/msfs2020?iframe_url_utf8=%2FArticleRead.nhn%253Fclubid%3D29973344%2526articleid%3D70649",
-                type: "pmdg",
-                version: "v1.0"
-            },
-            {
-                id: 5,
-                title: "Asiana Airlines HL8060",
-                addon: "FENIX A321 IAE SL",
-                link: "https://drive.google.com/file/d/1pqzyPAMWKRN_nyXaUZC9WYg59mgkLrYj/view", 
-                image: "https://drive.google.com/file/d/13PT2YyWGwZzGbc1CXV7RQkw7Oh1x6m0M/view?usp=sharing", 
-                moreLink: "https://cafe.naver.com/msfs2020?iframe_url_utf8=%2FArticleRead.nhn%253Fclubid%3D29973344%2526articleid%3D70763",
-                type: "fenix",
-                version: "v1.0"
-            }
-        ];
-
-        const grid = document.getElementById('liveryGrid');
-        const emptyState = document.getElementById('emptyState');
-        const modal = document.getElementById('downloadModal');
-        let currentLink = ''; 
-
-        const buttons = {
-            all: document.getElementById('btn-all'),
-            pmdg: document.getElementById('btn-pmdg'),
-            fenix: document.getElementById('btn-fenix')
-        };
-
-        function filterItems(type) {
-            Object.keys(buttons).forEach(key => {
-                const btn = buttons[key];
-                btn.classList.remove('active', 'text-black', 'border-black');
-                btn.classList.add('text-gray-400');
-                
-                if (key === 'pmdg') btn.classList.remove('text-brand-pmdg');
-                if (key === 'fenix') btn.classList.remove('text-brand-fenix');
-            });
-            
-            const activeBtn = buttons[type];
-            activeBtn.classList.remove('text-gray-400');
-            activeBtn.classList.add('active'); 
-
-            let filteredData = liveries;
-            if (type !== 'all') {
-                filteredData = liveries.filter(item => item.type === type);
-            }
-            renderLiveries(filteredData);
-        }
-
-        window.openLink = (link) => {
-            if (!link) { showToast("Link coming soon."); return; }
-            currentLink = link;
-            document.getElementById('downloadModal').classList.remove('hidden');
-            document.body.style.overflow = 'hidden';
-        }
-
-        window.openRequestModal = () => {
-            document.getElementById('requestModal').classList.remove('hidden');
-            document.body.style.overflow = 'hidden';
-        }
-
-        window.openMoreLink = (link) => {
-            if (!link) { showToast("External link not ready."); return; }
-            window.open(link, '_blank');
-        }
-
-        window.closeModal = (modalId) => {
-            if(modalId) {
-                document.getElementById(modalId).classList.add('hidden');
-            } else {
-                document.getElementById('downloadModal').classList.add('hidden');
-            }
-            currentLink = ''; 
-            document.body.style.overflow = '';
-        }
-
-        window.confirmDownload = () => {
-            if (currentLink) {
-                window.open(currentLink, '_blank');
-                closeModal('downloadModal');
-            }
-        }
-
-        window.onclick = function(event) {
-            if (event.target.classList.contains('fixed') && event.target.classList.contains('z-[100]')) {
-                event.target.classList.add('hidden');
-                document.body.style.overflow = ''; 
-            }
-        }
-
-        function convertImageUrl(url) {
+        // Global Helpers
+        window.convertImageUrl = function(url) {
             if (!url) return "https://placehold.co/800x450?text=No+Image";
             if (url.includes('drive.google.com')) {
                 let id = '';
@@ -730,10 +421,64 @@
             return url;
         }
 
-        function renderLiveries(data) {
-            grid.innerHTML = '';
+        window.showToast = (msg, type = 'normal') => {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            let icon = type==='error'?'<i class="fa-solid fa-circle-exclamation text-red-500"></i>':type==='success'?'<i class="fa-solid fa-circle-check text-blue-500"></i>':'<i class="fa-solid fa-bell text-gray-400"></i>';
+            toast.innerHTML = `${icon}<span>${msg}</span>`;
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.style.animation = 'fadeOutToast 0.4s forwards';
+                toast.addEventListener('animationend', () => toast.remove());
+            }, 3000);
+        };
+
+        // Modal Helpers
+        window.openLink = (link) => {
+            if (!link) { showToast("Link coming soon."); return; }
+            window.currentLink = link;
+            document.getElementById('downloadModal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+        window.openRequestModal = () => {
+            document.getElementById('requestModal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+        window.openMoreLink = (link) => {
+            if (!link) { showToast("External link not ready."); return; }
+            window.open(link, '_blank');
+        }
+        window.openUploadModal = () => {
+            document.getElementById('uploadModal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+        window.closeModal = (modalId) => {
+            const id = modalId || 'downloadModal';
+            document.getElementById(id).classList.add('hidden');
+            window.currentLink = ''; 
+            document.body.style.overflow = '';
+        }
+        window.confirmDownload = () => {
+            if (window.currentLink) { window.open(window.currentLink, '_blank'); closeModal('downloadModal'); }
+        }
+        window.onclick = function(event) {
+            if (event.target.classList.contains('fixed') && (event.target.classList.contains('z-[100]') || event.target.classList.contains('z-[200]'))) {
+                event.target.classList.add('hidden');
+                document.body.style.overflow = ''; 
+            }
+        }
+
+        // Render Logic
+        const grid = document.getElementById('liveryGrid');
+        const emptyState = document.getElementById('emptyState');
+        const buttons = { all: document.getElementById('btn-all'), pmdg: document.getElementById('btn-pmdg'), fenix: document.getElementById('btn-fenix') };
+
+        window.renderLiveries = (data) => {
+            window.storedLiveries = data;
             
-            if (data.length === 0) {
+            grid.innerHTML = '';
+            if (!data || data.length === 0) {
                 emptyState.classList.remove('hidden');
                 grid.classList.add('hidden');
                 return;
@@ -743,12 +488,10 @@
             }
 
             data.forEach(item => {
-                const imageUrl = convertImageUrl(item.image);
+                const imageUrl = window.convertImageUrl(item.image);
                 const badgeColor = item.type === 'pmdg' ? 'text-brand-pmdg' : 'text-brand-fenix';
-
                 const card = document.createElement('div');
                 card.className = 'card-item group bg-white'; 
-
                 card.innerHTML = `
                     <div class="relative aspect-video overflow-hidden bg-gray-50 mb-4 cursor-pointer group/image" onclick="openMoreLink('${item.moreLink}')">
                         <img src="${imageUrl}" alt="${item.title}" class="w-full h-full object-cover grayscale-[20%] group-hover/image:grayscale-0 transition-all duration-500 ease-out" referrerpolicy="no-referrer">
@@ -775,7 +518,318 @@
             });
         }
 
-        renderLiveries(liveries);
+        window.filterItems = (type) => {
+            Object.keys(buttons).forEach(key => {
+                const btn = buttons[key];
+                btn.classList.remove('active', 'text-black', 'border-black');
+                btn.classList.add('text-gray-400');
+                if (key === 'pmdg') btn.classList.remove('text-brand-pmdg');
+                if (key === 'fenix') btn.classList.remove('text-brand-fenix');
+            });
+            buttons[type].classList.remove('text-gray-400');
+            buttons[type].classList.add('active'); 
+
+            if(window.masterLiveries) {
+                let filtered = window.masterLiveries;
+                if (type !== 'all') {
+                    filtered = window.masterLiveries.filter(item => item.type === type);
+                }
+                renderLiveries(filtered);
+            }
+        }
+        
+        window.switchAdminTab = (tab) => {
+            document.getElementById('view-requests').classList.add('hidden');
+            document.getElementById('view-liveries').classList.add('hidden');
+            document.getElementById('tab-requests').classList.remove('active');
+            document.getElementById('tab-liveries').classList.remove('active');
+            
+            document.getElementById(`view-${tab}`).classList.remove('hidden');
+            document.getElementById(`tab-${tab}`).classList.add('active');
+
+            if(tab === 'requests') window.loadAdminRequests();
+            if(tab === 'liveries') window.loadAdminLiveries();
+        }
+    </script>
+
+    <!-- Firebase Module -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-app.js";
+        import { getFirestore, collection, addDoc, getDocs, deleteDoc, updateDoc, doc, Timestamp, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js";
+        import { getAuth, signInWithEmailAndPassword, signOut, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyB8Nn-SCdjfA_H-8hi_660UsjwTtxc0x8M",
+            authDomain: "choco-livery-db.firebaseapp.com",
+            projectId: "choco-livery-db",
+            storageBucket: "choco-livery-db.firebasestorage.app",
+            messagingSenderId: "480683436152",
+            appId: "1:480683436152:web:8ca6284e189d6ae5bae58d"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+
+        // Variables for delete logic
+        let currentDeleteId = null;
+        let currentDeleteType = null;
+
+        // --- Data Logic ---
+        window.loadLiveries = async () => {
+            try {
+                const q = query(collection(db, "liveries"), orderBy("createdAt", "desc"));
+                const querySnapshot = await getDocs(q);
+                const list = [];
+                querySnapshot.forEach((doc) => {
+                    list.push({ id: doc.id, ...doc.data() });
+                });
+
+                if (list.length === 0) {
+                    window.renderLiveries([]);
+                } else {
+                    window.masterLiveries = list; 
+                    window.renderLiveries(list);
+                }
+            } catch (e) {
+                console.error("Load Error:", e);
+                window.renderLiveries([]); 
+                window.showToast("DB Connection Failed or Empty.", "error");
+            }
+        };
+
+        // --- Auth & Functions Binding ---
+        window.submitRequest = async () => {
+            const aircraft = document.getElementById('reqAircraft').value.trim();
+            const airline = document.getElementById('reqAirline').value.trim();
+            const reg = document.getElementById('reqReg').value.trim();
+            const desc = document.getElementById('reqDesc').value.trim();
+            const imgInputs = document.querySelectorAll('.req-img-input');
+            const btn = document.getElementById('submitBtn');
+
+            const images = [];
+            imgInputs.forEach(input => { if (input.value.trim()) images.push(input.value.trim()); });
+
+            if(!aircraft || !airline || !reg || images.length === 0) {
+                window.showToast("Please fill in all required fields.", "error");
+                return;
+            }
+
+            btn.innerText = "Saving...";
+            btn.disabled = true;
+
+            try {
+                if (!auth.currentUser) await signInAnonymously(auth);
+                await addDoc(collection(db, "requests"), {
+                    aircraft, airline, reg, images, description: desc, completed: false, createdAt: Timestamp.now()
+                });
+                window.showToast("Request submitted successfully!", "success");
+                window.closeModal('requestModal');
+                
+                document.getElementById('reqAircraft').value = '';
+                document.getElementById('reqAirline').value = '';
+                document.getElementById('reqReg').value = '';
+                document.getElementById('reqDesc').value = '';
+                imgInputs.forEach(input => input.value = '');
+            } catch (e) {
+                window.showToast("Error: " + e.message, "error");
+            } finally {
+                btn.innerText = "SUBMIT REQUEST";
+                btn.disabled = false;
+            }
+        };
+
+        window.loginAdmin = async () => {
+            const email = document.getElementById('adminEmail').value;
+            const pw = document.getElementById('adminPw').value;
+            if(!email || !pw) return window.showToast("Enter email/password.", "error");
+            try {
+                await signInWithEmailAndPassword(auth, email, pw);
+                window.closeModal('adminLoginModal');
+                window.openAdminDashboard();
+                window.showToast("Logged in as Admin.", "success");
+            } catch (e) {
+                window.showToast("Login failed: " + e.message, "error");
+            }
+        };
+
+        window.logoutAdmin = async () => {
+            await signOut(auth);
+            window.closeModal('adminDashModal');
+            document.getElementById('adminEmail').value = '';
+            document.getElementById('adminPw').value = '';
+            window.showToast("Logged out.", "success");
+        };
+
+        window.submitLivery = async () => {
+            const title = document.getElementById('upTitle').value;
+            const addon = document.getElementById('upAddon').value;
+            const type = document.getElementById('upType').value;
+            const version = document.getElementById('upVersion').value;
+            const link = document.getElementById('upLink').value;
+            const image = document.getElementById('upImage').value;
+            const moreLink = document.getElementById('upMoreLink').value;
+            const btn = document.getElementById('uploadBtn');
+
+            if(!title || !addon || !link || !image) {
+                window.showToast("Missing required fields.", "error");
+                return;
+            }
+            btn.innerText = "Uploading...";
+            btn.disabled = true;
+            try {
+                await addDoc(collection(db, "liveries"), {
+                    title, addon, type, version, link, image, moreLink, createdAt: Timestamp.now()
+                });
+                window.showToast("Livery uploaded!", "success");
+                window.closeModal('uploadModal');
+                window.loadLiveries();
+                window.loadAdminLiveries();
+            } catch (e) {
+                window.showToast("Upload failed: " + e.message, "error");
+            } finally {
+                btn.innerText = "UPLOAD";
+                btn.disabled = false;
+            }
+        };
+
+        // --- Delete Logic with Custom Modal ---
+        window.openDeleteModal = (type, id) => {
+            currentDeleteId = id;
+            currentDeleteType = type;
+            document.getElementById('deleteConfirmModal').classList.remove('hidden');
+        };
+
+        window.confirmDeleteAction = async () => {
+            if (!currentDeleteId || !currentDeleteType) return;
+            
+            window.closeModal('deleteConfirmModal');
+            
+            try {
+                const collectionName = currentDeleteType === 'request' ? 'requests' : 'liveries';
+                await deleteDoc(doc(db, collectionName, currentDeleteId));
+                window.showToast("Deleted successfully.", "success");
+                
+                if (currentDeleteType === 'request') window.loadAdminRequests();
+                else {
+                    window.loadAdminLiveries();
+                    window.loadLiveries();
+                }
+            } catch(e) {
+                console.error(e);
+                window.showToast("Delete failed: " + e.message, "error");
+            }
+        };
+
+        window.deleteLiveryFromDB = async (id) => {
+            // Confirm removed due to sandbox environment restrictions
+            try {
+                await deleteDoc(doc(db, "liveries", id));
+                window.showToast("Livery deleted.", "success");
+                window.loadLiveries();
+                window.loadAdminLiveries();
+            } catch(e) { window.showToast("Delete failed: " + e.message, "error"); }
+        };
+
+        window.loadAdminRequests = async () => {
+            const listContainer = document.getElementById('requestListContainer');
+            listContainer.innerHTML = '<div class="text-center text-gray-400 py-10 text-sm">Loading requests...</div>';
+            try {
+                const q = query(collection(db, "requests"), orderBy("createdAt", "desc"));
+                const snapshot = await getDocs(q);
+                let html = '';
+                if(snapshot.empty) html = '<div class="text-center text-gray-400 py-10 text-sm">No requests found.</div>';
+                else {
+                    snapshot.forEach(doc => {
+                        const req = { id: doc.id, ...doc.data() };
+                        const date = new Date(req.createdAt.seconds * 1000).toLocaleString('en-US');
+                        let imgHtml = '';
+                        if(req.images) req.images.forEach((l, i) => imgHtml += `<a href="${l}" target="_blank" class="text-xs bg-blue-50 text-blue-600 px-2 py-1 rounded hover:underline">Img ${i+1}</a> `);
+                        const isCompleted = req.completed === true;
+                        html += `
+                            <div class="bg-white p-4 rounded border border-gray-200 mb-3 hover:shadow-sm transition-all relative ${isCompleted ? 'opacity-50' : ''}">
+                                <div class="absolute top-4 right-4 flex gap-2">
+                                    <button onclick="toggleComplete('${req.id}', ${isCompleted})" class="text-[10px] font-bold px-2 py-1 rounded uppercase ${isCompleted ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600'}">${isCompleted ? 'Completed' : 'Pending'}</button>
+                                    <button onclick="openDeleteModal('request', '${req.id}')" class="text-[10px] font-bold px-2 py-1 rounded uppercase bg-red-50 text-red-500">Delete</button>
+                                </div>
+                                <div class="pr-20">
+                                    <div class="flex gap-2 mb-1"><span class="font-bold text-xs bg-black text-white px-1.5 rounded">${req.aircraft}</span> <span class="font-bold text-xs bg-gray-200 text-gray-700 px-1.5 rounded">${req.reg}</span></div>
+                                    <h4 class="font-bold text-sm text-gray-800">${req.airline}</h4>
+                                    ${req.description ? `<p class="text-xs text-gray-500 mt-2 bg-gray-50 p-2 rounded">${req.description}</p>` : ''}
+                                    <div class="mt-2 flex gap-1">${imgHtml}</div>
+                                    <div class="text-[10px] text-gray-300 mt-2">${date}</div>
+                                </div>
+                            </div>
+                        `;
+                    });
+                }
+                listContainer.innerHTML = html;
+            } catch(e) { console.error(e); }
+        };
+
+        window.loadAdminLiveries = async () => {
+            const listContainer = document.getElementById('liveryListContainer');
+            listContainer.innerHTML = '<div class="text-center text-gray-400 py-10 text-sm">Loading liveries...</div>';
+            try {
+                const q = query(collection(db, "liveries"), orderBy("createdAt", "desc"));
+                const snapshot = await getDocs(q);
+                let html = '';
+                if(snapshot.empty) html = '<div class="text-center text-gray-400 py-10 text-sm">No uploaded liveries.</div>';
+                else {
+                    snapshot.forEach(doc => {
+                        const item = { id: doc.id, ...doc.data() };
+                        html += `
+                            <div class="bg-white p-4 rounded border border-gray-200 mb-3 flex justify-between items-center hover:shadow-sm">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-12 h-8 bg-gray-100 rounded overflow-hidden"><img src="${window.convertImageUrl(item.image)}" class="w-full h-full object-cover"></div>
+                                    <div><h4 class="font-bold text-sm text-gray-800">${item.title}</h4><p class="text-[10px] text-gray-500">${item.addon} • ${item.version}</p></div>
+                                </div>
+                                <button onclick="openDeleteModal('livery', '${item.id}')" class="text-xs text-red-500 hover:bg-red-50 px-2 py-1 rounded font-bold">Delete</button>
+                            </div>
+                        `;
+                    });
+                }
+                listContainer.innerHTML = html;
+            } catch(e) { console.error(e); }
+        };
+
+        window.toggleComplete = async (id, currentStatus) => {
+            try {
+                await updateDoc(doc(db, "requests", id), { completed: !currentStatus });
+                window.loadAdminRequests();
+                window.showToast("Status updated.", "success");
+            } catch(e) { window.showToast("Update failed: " + e.message, "error"); }
+        };
+
+        window.openAdminLogin = () => {
+            const user = auth.currentUser;
+            if(user && !user.isAnonymous) {
+                window.openAdminDashboard();
+            } else {
+                document.getElementById('adminLoginModal').classList.remove('hidden');
+            }
+        };
+
+        window.openAdminDashboard = () => {
+            document.getElementById('adminDashModal').classList.remove('hidden');
+            window.switchAdminTab('requests'); // Default tab
+        }
+
+        window.switchAdminTab = (tab) => {
+            document.getElementById('view-requests').classList.add('hidden');
+            document.getElementById('view-liveries').classList.add('hidden');
+            document.getElementById('tab-requests').classList.remove('active');
+            document.getElementById('tab-liveries').classList.remove('active');
+            
+            document.getElementById(`view-${tab}`).classList.remove('hidden');
+            document.getElementById(`tab-${tab}`).classList.add('active');
+
+            if(tab === 'requests') window.loadAdminRequests();
+            if(tab === 'liveries') window.loadAdminLiveries();
+        }
+
+        // Start App
+        loadLiveries();
     </script>
 </body>
 </html>
