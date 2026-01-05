@@ -65,6 +65,21 @@
         .filter-tab.active::after {
             width: 100%;
         }
+        /* New Sim Tab Styles */
+        .sim-tab {
+            padding: 8px 24px;
+            border-radius: 9999px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            transition: all 0.3s;
+            border: 1px solid #e5e7eb;
+            color: #9ca3af;
+        }
+        .sim-tab.active {
+            background-color: #1a1a1a;
+            color: white;
+            border-color: #1a1a1a;
+        }
         .card-item {
             transition: transform 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
         }
@@ -208,6 +223,12 @@
 
     <!-- Main Content -->
     <main class="flex-grow max-w-7xl mx-auto px-6 lg:px-8 pb-20 w-full" id="featured">
+        <!-- New Simulator Toggles -->
+        <div class="flex justify-center mb-8 gap-3 font-logo">
+            <button onclick="switchSim('msfs2020')" id="sim-2020" class="sim-tab">MSFS 2020</button>
+            <button onclick="switchSim('msfs2024')" id="sim-2024" class="sim-tab active">MSFS 2024</button>
+        </div>
+
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-8 mb-12 border-b border-gray-100 pb-4">
             <div class="flex gap-8">
                 <button onclick="filterItems('all')" id="btn-all" class="filter-tab active font-logo text-sm tracking-widest text-gray-400 hover:text-black uppercase" data-i18n="filter_all">
@@ -377,6 +398,14 @@
                 <div>
                     <label class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1 block">Title (e.g. Jeju Air HL8089)</label>
                     <input type="text" id="upTitle" class="input-sharp">
+                </div>
+                <!-- ADDED: Simulator Selector -->
+                <div>
+                    <label class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1 block">Simulator Version</label>
+                    <select id="upSim" class="input-sharp">
+                        <option value="msfs2024">MSFS 2024</option>
+                        <option value="msfs2020">MSFS 2020</option>
+                    </select>
                 </div>
                 <div class="grid grid-cols-2 gap-4">
                     <div>
@@ -615,7 +644,8 @@
                 const parts = url.match(/\/d\/(.*?)\//);
                 if (parts && parts[1]) id = parts[1];
                 else if (url.includes('id=')) id = url.split('id=')[1].split('&')[0];
-                if (id) return `https://drive.google.com/thumbnail?id=${id}&sz=w1920`;
+                // Reduced by ~35% from 1920 (1920 * 0.65 ≈ 1250)
+                if (id) return `https://drive.google.com/thumbnail?id=${id}&sz=w1250`;
             }
             return url;
         }
@@ -681,8 +711,10 @@
         const buttons = { all: document.getElementById('btn-all'), pmdg: document.getElementById('btn-pmdg'), fenix: document.getElementById('btn-fenix') };
 
         window.renderLiveries = (data) => {
+            // No global assignment here to prevent overwriting master data
+            // window.storedLiveries is now for reference if needed, but we mostly use window.masterLiveries with filtering
             window.storedLiveries = data;
-            
+
             grid.innerHTML = '';
             if (!data || data.length === 0) {
                 emptyState.classList.remove('hidden');
@@ -710,7 +742,10 @@
                     </div>
                     <div class="flex flex-col">
                         <div class="flex justify-between items-center mb-1">
-                            <span class="font-logo text-[10px] font-bold tracking-widest uppercase ${badgeColor}">${item.addon}</span>
+                            <div class="flex gap-2">
+                                <span class="font-logo text-[10px] font-bold tracking-widest uppercase ${badgeColor}">${item.addon}</span>
+                                <span class="font-logo text-[10px] font-bold tracking-widest uppercase text-gray-500">${item.simulator === 'msfs2024' ? '2024' : '2020'}</span>
+                            </div>
                             <span class="font-logo text-[10px] text-gray-400">${item.version || 'V1.0'}</span>
                         </div>
                         <h3 class="text-lg font-light text-black truncate mb-4">${item.title}</h3>
@@ -724,7 +759,23 @@
             });
         }
 
+        // --- NEW FILTER LOGIC ---
+        window.currentSim = 'msfs2024'; // Default changed to 2024
+        window.currentType = 'all';     // Default
+
+        window.switchSim = (sim) => {
+            window.currentSim = sim;
+            // UI Toggle
+            document.getElementById('sim-2020').classList.toggle('active', sim === 'msfs2020');
+            document.getElementById('sim-2024').classList.toggle('active', sim === 'msfs2024');
+            // Re-apply filter
+            window.filterItems(window.currentType);
+        }
+
         window.filterItems = (type) => {
+            window.currentType = type;
+            
+            // UI Toggle for Type
             Object.keys(buttons).forEach(key => {
                 const btn = buttons[key];
                 btn.classList.remove('active', 'text-black', 'border-black');
@@ -736,33 +787,26 @@
             buttons[type].classList.add('active'); 
 
             if(window.masterLiveries) {
-                let filtered = window.masterLiveries;
-                if (type !== 'all') {
-                    filtered = window.masterLiveries.filter(item => item.type === type);
-                }
+                const filtered = window.masterLiveries.filter(item => {
+                    // Check Simulator Version (default to 2024 if undefined for legacy compatibility)
+                    const itemSim = item.simulator || 'msfs2024';
+                    const isSimMatch = itemSim === window.currentSim;
+
+                    // Check Type
+                    const isTypeMatch = type === 'all' || item.type === type;
+
+                    return isSimMatch && isTypeMatch;
+                });
                 renderLiveries(filtered);
             }
-        }
-        
-        window.switchAdminTab = (tab) => {
-            document.getElementById('view-requests').classList.add('hidden');
-            document.getElementById('view-liveries').classList.add('hidden');
-            document.getElementById('tab-requests').classList.remove('active');
-            document.getElementById('tab-liveries').classList.remove('active');
-            
-            document.getElementById(`view-${tab}`).classList.remove('hidden');
-            document.getElementById(`tab-${tab}`).classList.add('active');
-
-            if(tab === 'requests') window.loadAdminRequests();
-            if(tab === 'liveries') window.loadAdminLiveries();
         }
     </script>
 
     <!-- Firebase Module -->
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-app.js";
-        import { getFirestore, collection, addDoc, getDocs, deleteDoc, updateDoc, doc, Timestamp, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js";
-        import { getAuth, signInWithEmailAndPassword, signOut, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js";
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getFirestore, collection, addDoc, getDocs, deleteDoc, updateDoc, doc, Timestamp, query, orderBy } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getAuth, signInWithEmailAndPassword, signOut, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyB8Nn-SCdjfA_H-8hi_660UsjwTtxc0x8M",
@@ -791,12 +835,10 @@
                     list.push({ id: doc.id, ...doc.data() });
                 });
 
-                if (list.length === 0) {
-                    window.renderLiveries([]);
-                } else {
-                    window.masterLiveries = list; 
-                    window.renderLiveries(list);
-                }
+                window.masterLiveries = list; 
+                // Initial filter apply (uses defaults: 2020, all)
+                window.filterItems('all');
+                
             } catch (e) {
                 console.error("Load Error:", e);
                 window.renderLiveries([]); 
@@ -875,6 +917,9 @@
             const link = document.getElementById('upLink').value;
             const image = document.getElementById('upImage').value;
             const moreLink = document.getElementById('upMoreLink').value;
+            // NEW: Read simulator version
+            const simulator = document.getElementById('upSim').value;
+            
             const btn = document.getElementById('uploadBtn');
 
             if(!title || !addon || !link || !image) {
@@ -885,7 +930,7 @@
             btn.disabled = true;
             try {
                 await addDoc(collection(db, "liveries"), {
-                    title, addon, type, version, link, image, moreLink, createdAt: Timestamp.now()
+                    title, addon, type, version, link, image, moreLink, simulator, createdAt: Timestamp.now()
                 });
                 window.showToast("toast_uploaded", "success");
                 window.closeModal('uploadModal');
@@ -925,16 +970,6 @@
                 console.error(e);
                 window.showToast("toast_delete_fail", "error");
             }
-        };
-
-        window.deleteLiveryFromDB = async (id) => {
-            // Confirm removed due to sandbox environment restrictions
-            try {
-                await deleteDoc(doc(db, "liveries", id));
-                window.showToast("toast_deleted", "success");
-                window.loadLiveries();
-                window.loadAdminLiveries();
-            } catch(e) { window.showToast("toast_delete_fail", "error"); }
         };
 
         window.loadAdminRequests = async () => {
@@ -988,7 +1023,10 @@
                             <div class="bg-white p-4 rounded border border-gray-200 mb-3 flex justify-between items-center hover:shadow-sm">
                                 <div class="flex items-center gap-3">
                                     <div class="w-12 h-8 bg-gray-100 rounded overflow-hidden"><img src="${convertImageUrl(item.image)}" class="w-full h-full object-cover"></div>
-                                    <div><h4 class="font-bold text-sm text-gray-800">${item.title}</h4><p class="text-[10px] text-gray-500">${item.addon} • ${item.version}</p></div>
+                                    <div>
+                                        <h4 class="font-bold text-sm text-gray-800">${item.title}</h4>
+                                        <p class="text-[10px] text-gray-500">${item.addon} • ${item.version} • <span class="text-blue-500">${item.simulator === 'msfs2024' ? '2024' : '2020'}</span></p>
+                                    </div>
                                 </div>
                                 <button onclick="openDeleteModal('livery', '${item.id}')" class="text-xs text-red-500 hover:bg-red-50 px-2 py-1 rounded font-bold">Delete</button>
                             </div>
