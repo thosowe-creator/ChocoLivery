@@ -302,20 +302,28 @@
             <div class="mb-2"><h3 class="font-logo font-light text-2xl text-black mb-2" data-i18n="modal_request_title">REQUEST LIVERY</h3><div class="h-0.5 w-12 bg-black"></div></div>
             <p class="text-xs text-red-500 text-right mb-6 font-bold" data-i18n="req_required_hint">* Indicates required field</p>
             <div class="space-y-4 mb-8">
+                <!-- Added Simulator Version as Item #1 -->
                 <div>
-                    <label class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1 block"><span data-i18n="req_label_aircraft">1. Aircraft Type</span> <span class="text-red-500">*</span></label>
+                    <label class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1 block"><span data-i18n="req_label_sim">1. Simulator Version</span> <span class="text-red-500">*</span></label>
+                    <select id="reqSim" class="input-sharp">
+                        <option value="msfs2024">MSFS 2024</option>
+                        <option value="msfs2020">MSFS 2020</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1 block"><span data-i18n="req_label_aircraft">2. Aircraft Type</span> <span class="text-red-500">*</span></label>
                     <input type="text" id="reqAircraft" class="input-sharp" placeholder="ex) PMDG 737-800">
                 </div>
                 <div>
-                    <label class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1 block"><span data-i18n="req_label_airline">2. Airline Name</span> <span class="text-red-500">*</span></label>
+                    <label class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1 block"><span data-i18n="req_label_airline">3. Airline Name</span> <span class="text-red-500">*</span></label>
                     <input type="text" id="reqAirline" class="input-sharp" placeholder="ex) Jeju Air">
                 </div>
                 <div>
-                    <label class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1 block"><span data-i18n="req_label_reg">3. Aircraft Reg.</span> <span class="text-red-500">*</span></label>
+                    <label class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1 block"><span data-i18n="req_label_reg">4. Aircraft Reg.</span> <span class="text-red-500">*</span></label>
                     <input type="text" id="reqReg" class="input-sharp" placeholder="ex) HL8089">
                 </div>
                 <div>
-                    <label class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1 block"><span data-i18n="req_label_images">4. Reference Images (Min 1, Max 5)</span> <span class="text-red-500">*</span></label>
+                    <label class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1 block"><span data-i18n="req_label_images">5. Reference Images (Min 1, Max 5)</span> <span class="text-red-500">*</span></label>
                     <div class="space-y-2">
                         <input type="text" class="input-sharp req-img-input" placeholder="Link 1 (Required) *">
                         <input type="text" class="input-sharp req-img-input" placeholder="Link 2 (Optional)">
@@ -325,7 +333,7 @@
                     </div>
                 </div>
                 <div>
-                    <label class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1 block" data-i18n="req_label_desc">5. Details</label>
+                    <label class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1 block" data-i18n="req_label_desc">6. Details</label>
                     <textarea id="reqDesc" class="input-sharp h-24 resize-none" placeholder="Any specific details or requests?"></textarea>
                 </div>
             </div>
@@ -476,11 +484,13 @@
 
                 modal_request_title: "REQUEST LIVERY",
                 req_required_hint: "* Indicates required field",
-                req_label_aircraft: "1. Aircraft Type",
-                req_label_airline: "2. Airline Name",
-                req_label_reg: "3. Aircraft Reg.",
-                req_label_images: "4. Reference Images (Min 1, Max 5)",
-                req_label_desc: "5. Details",
+                // Updated Numbering
+                req_label_sim: "1. Simulator Version",
+                req_label_aircraft: "2. Aircraft Type",
+                req_label_airline: "3. Airline Name",
+                req_label_reg: "4. Aircraft Reg.",
+                req_label_images: "5. Reference Images (Min 1, Max 5)",
+                req_label_desc: "6. Details",
                 btn_submit_request: "Submit Request",
 
                 modal_admin_title: "ADMIN ACCESS",
@@ -544,11 +554,13 @@
 
                 modal_request_title: "리버리 요청",
                 req_required_hint: "* 표시는 필수 입력 사항입니다",
-                req_label_aircraft: "1. 기체 종류 (Aircraft Type)",
-                req_label_airline: "2. 항공사 (Airline Name)",
-                req_label_reg: "3. 등록 번호 (Aircraft Reg.)",
-                req_label_images: "4. 참고 이미지 (최소 1장, 최대 5장)",
-                req_label_desc: "5. 세부 사항",
+                // Updated Numbering
+                req_label_sim: "1. 시뮬레이터 버전",
+                req_label_aircraft: "2. 기체 종류 (Aircraft Type)",
+                req_label_airline: "3. 항공사 (Airline Name)",
+                req_label_reg: "4. 등록 번호 (Aircraft Reg.)",
+                req_label_images: "5. 참고 이미지 (최소 1장, 최대 5장)",
+                req_label_desc: "6. 세부 사항",
                 btn_submit_request: "요청 제출하기",
 
                 modal_admin_title: "관리자 접속",
@@ -698,8 +710,13 @@
         window.confirmDownload = () => {
             if (window.currentLink) { window.open(window.currentLink, '_blank'); closeModal('downloadModal'); }
         }
+        
+        // Window click for modal backdrop - Modified to ignore Admin Dashboard
         window.onclick = function(event) {
             if (event.target.classList.contains('fixed') && (event.target.classList.contains('z-[100]') || event.target.classList.contains('z-[200]'))) {
+                // EXCEPTION: If it is the Admin Dashboard, do NOT close
+                if (event.target.id === 'adminDashModal') return;
+
                 event.target.classList.add('hidden');
                 document.body.style.overflow = ''; 
             }
@@ -845,6 +862,8 @@
 
         // --- Auth & Functions Binding ---
         window.submitRequest = async () => {
+            // New Sim Field
+            const simulator = document.getElementById('reqSim').value;
             const aircraft = document.getElementById('reqAircraft').value.trim();
             const airline = document.getElementById('reqAirline').value.trim();
             const reg = document.getElementById('reqReg').value.trim();
@@ -866,11 +885,14 @@
             try {
                 if (!auth.currentUser) await signInAnonymously(auth);
                 await addDoc(collection(db, "requests"), {
+                    simulator, // Save Sim Version
                     aircraft, airline, reg, images, description: desc, completed: false, createdAt: Timestamp.now()
                 });
                 window.showToast("toast_req_success", "success");
                 window.closeModal('requestModal');
                 
+                // Reset Fields
+                document.getElementById('reqSim').value = 'msfs2024';
                 document.getElementById('reqAircraft').value = '';
                 document.getElementById('reqAirline').value = '';
                 document.getElementById('reqReg').value = '';
@@ -984,6 +1006,10 @@
                         let imgHtml = '';
                         if(req.images) req.images.forEach((l, i) => imgHtml += `<a href="${l}" target="_blank" class="text-xs bg-blue-50 text-blue-600 px-2 py-1 rounded hover:underline">Img ${i+1}</a> `);
                         const isCompleted = req.completed === true;
+                        
+                        // Added simulator info in display
+                        const simLabel = req.simulator ? (req.simulator === 'msfs2024' ? '2024' : '2020') : '2020';
+
                         html += `
                             <div class="bg-white p-4 rounded border border-gray-200 mb-3 hover:shadow-sm transition-all relative ${isCompleted ? 'opacity-50' : ''}">
                                 <div class="absolute top-4 right-4 flex gap-2">
@@ -991,7 +1017,11 @@
                                     <button onclick="openDeleteModal('request', '${req.id}')" class="text-[10px] font-bold px-2 py-1 rounded uppercase bg-red-50 text-red-500">Delete</button>
                                 </div>
                                 <div class="pr-20">
-                                    <div class="flex gap-2 mb-1"><span class="font-bold text-xs bg-black text-white px-1.5 rounded">${req.aircraft}</span> <span class="font-bold text-xs bg-gray-200 text-gray-700 px-1.5 rounded">${req.reg}</span></div>
+                                    <div class="flex gap-2 mb-1">
+                                        <span class="font-bold text-xs bg-black text-white px-1.5 rounded">${req.aircraft}</span> 
+                                        <span class="font-bold text-xs bg-gray-200 text-gray-700 px-1.5 rounded">${req.reg}</span>
+                                        <span class="font-bold text-xs bg-blue-100 text-blue-800 px-1.5 rounded">${simLabel}</span>
+                                    </div>
                                     <h4 class="font-bold text-sm text-gray-800">${req.airline}</h4>
                                     ${req.description ? `<p class="text-xs text-gray-500 mt-2 bg-gray-50 p-2 rounded">${req.description}</p>` : ''}
                                     <div class="mt-2 flex gap-1">${imgHtml}</div>
