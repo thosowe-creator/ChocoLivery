@@ -283,6 +283,7 @@
                 </div>
                 <div class="space-y-2 pt-4 border-t border-gray-100">
                     <p class="font-bold text-sm text-black uppercase tracking-wide flex items-center gap-2"><i class="fa-solid fa-info-circle text-gray-400"></i> <span data-i18n="modal_install_title">How to Install</span></p>
+                    <!-- Default Install Text (Dynamic) -->
                     <p class="text-sm text-gray-600 font-light leading-relaxed" data-i18n="modal_install_desc">
                         1. Download and unzip the file.<br>
                         2. Place the folder into your <span class="font-mono text-xs bg-gray-100 px-1 py-0.5 text-black">Community</span> folder.
@@ -415,6 +416,14 @@
                         <option value="msfs2020">MSFS 2020</option>
                     </select>
                 </div>
+                <!-- ADDED: Install Method Selector -->
+                <div>
+                    <label class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1 block">Installation Method</label>
+                    <select id="upInstallType" class="input-sharp">
+                        <option value="manual">Drag & Drop (Community Folder)</option>
+                        <option value="oc3">PMDG Operation Center 3 (.ptp)</option>
+                    </select>
+                </div>
                 <div class="grid grid-cols-2 gap-4">
                     <div>
                         <label class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1 block">Addon (e.g. PMDG 737-800)</label>
@@ -480,6 +489,7 @@
                 modal_warn_desc: "Unauthorized modification and redistribution of this file are <span class='font-medium text-black'>strictly prohibited</span>.<br>Please use it for personal use only.",
                 modal_install_title: "How to Install",
                 modal_install_desc: "1. Download and unzip the file.<br>2. Place the folder into your <span class='font-mono text-xs bg-gray-100 px-1 py-0.5 text-black'>Community</span> folder.",
+                modal_install_desc_oc3: "1. Download and unzip the file.<br>2. Open <strong>PMDG Operation Center 3</strong> then Import This File.",
                 btn_agree_download: "Agree & Download",
 
                 modal_request_title: "REQUEST LIVERY",
@@ -550,6 +560,7 @@
                 modal_warn_desc: "이 파일의 <span class='font-medium text-black'>무단 수정 및 재배포를 엄격히 금지</span>합니다.<br>개인적인 용도로만 사용해주시기 바랍니다.",
                 modal_install_title: "설치 방법",
                 modal_install_desc: "1. 파일을 다운로드 후 압축을 해제하세요.<br>2. 폴더를 <span class='font-mono text-xs bg-gray-100 px-1 py-0.5 text-black'>Community</span> 경로에 넣으세요.",
+                modal_install_desc_oc3: "1. 파일을 다운로드 후 압축을 해제하세요.<br>2. <strong>PMDG Operation Center 3</strong> 실행 후 파일을 Import 하세요.",
                 btn_agree_download: "동의 및 다운로드",
 
                 modal_request_title: "리버리 요청",
@@ -627,6 +638,13 @@
                 }
             });
 
+            // Re-Apply dynamic install text if modal is open
+            if(window.currentInstallType && !document.getElementById('downloadModal').classList.contains('hidden')) {
+                const descKey = window.currentInstallType === 'oc3' ? 'modal_install_desc_oc3' : 'modal_install_desc';
+                const el = document.querySelector('[data-i18n="modal_install_desc"]');
+                if(el) el.innerHTML = translations[lang][descKey];
+            }
+
             // Update Placeholders
             document.querySelectorAll('.req-img-input').forEach((el, index) => {
                 el.placeholder = index === 0 ? translations[lang]['ph_link_req'] : translations[lang]['ph_link_opt'];
@@ -683,9 +701,16 @@
         };
 
         // Modal Helpers
-        window.openLink = (link) => {
+        window.openLink = (link, installType = 'manual') => {
             if (!link) { showToast("toast_link_soon", "normal"); return; }
             window.currentLink = link;
+            window.currentInstallType = installType; // Store for lang switch
+
+            // Dynamic Install Text
+            const descKey = installType === 'oc3' ? 'modal_install_desc_oc3' : 'modal_install_desc';
+            const installDescEl = document.querySelector('[data-i18n="modal_install_desc"]');
+            if(installDescEl) installDescEl.innerHTML = window.getText(descKey);
+
             document.getElementById('downloadModal').classList.remove('hidden');
             document.body.style.overflow = 'hidden';
         }
@@ -763,7 +788,7 @@
                             <span class="font-logo text-[10px] text-gray-400">${item.version || 'V1.0'}</span>
                         </div>
                         <h3 class="text-lg font-light text-black truncate mb-4">${item.title}</h3>
-                        <button onclick="openLink('${item.link}')" class="w-full border border-gray-200 h-10 flex items-center justify-center gap-2 hover:bg-black hover:text-white hover:border-black transition-all duration-300 group/btn">
+                        <button onclick="openLink('${item.link}', '${item.installType || 'manual'}')" class="w-full border border-gray-200 h-10 flex items-center justify-center gap-2 hover:bg-black hover:text-white hover:border-black transition-all duration-300 group/btn">
                             <span class="font-logo text-[10px] tracking-[0.15em] uppercase font-medium">${window.getText('card_download')}</span>
                             <i class="fa-solid fa-arrow-down text-xs group-hover/btn:translate-y-0.5 transition-transform"></i>
                         </button>
@@ -940,6 +965,8 @@
             const moreLink = document.getElementById('upMoreLink').value;
             // NEW: Read simulator version
             const simulator = document.getElementById('upSim').value;
+            // NEW: Read install method
+            const installType = document.getElementById('upInstallType').value;
             
             const btn = document.getElementById('uploadBtn');
 
@@ -951,7 +978,7 @@
             btn.disabled = true;
             try {
                 await addDoc(collection(db, "liveries"), {
-                    title, addon, type, version, link, image, moreLink, simulator, createdAt: Timestamp.now()
+                    title, addon, type, version, link, image, moreLink, simulator, installType, createdAt: Timestamp.now()
                 });
                 window.showToast("toast_uploaded", "success");
                 window.closeModal('uploadModal');
