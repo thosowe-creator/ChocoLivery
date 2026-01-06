@@ -820,7 +820,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getFirestore, collection, addDoc, getDocs, deleteDoc, updateDoc, doc, Timestamp, query, orderBy } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-        import { getAuth, signInWithEmailAndPassword, signOut, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getAuth, signInWithEmailAndPassword, signOut, signInAnonymously, setPersistence, browserSessionPersistence } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyB8Nn-SCdjfA_H-8hi_660UsjwTtxc0x8M",
@@ -911,6 +911,8 @@
             const pw = document.getElementById('adminPw').value;
             if(!email || !pw) return window.showToast("toast_enter_creds", "error");
             try {
+                // Set persistence to SESSION (logs out when tab/window is closed)
+                await setPersistence(auth, browserSessionPersistence);
                 await signInWithEmailAndPassword(auth, email, pw);
                 window.closeModal('adminLoginModal');
                 window.openAdminDashboard();
