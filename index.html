@@ -213,7 +213,8 @@
                         <span class="lang-divider">|</span>
                         <button onclick="setLanguage('en')" id="lang-en" class="lang-btn active">EN</button>
                     </div>
-                    <button onclick="openRequestModal()" class="font-logo text-xs font-bold tracking-widest text-black border border-black px-4 py-2 hover:bg-black hover:text-white transition-colors uppercase" data-i18n="nav_request">
+                    <!-- Changed onclick to openRequestNotice -->
+                    <button onclick="openRequestNotice()" class="font-logo text-xs font-bold tracking-widest text-black border border-black px-4 py-2 hover:bg-black hover:text-white transition-colors uppercase" data-i18n="nav_request">
                         Request Livery
                     </button>
                 </div>
@@ -267,6 +268,22 @@
     <div id="toast-container"></div>
 
     <!-- Modals -->
+
+    <!-- 1-A. Request Notice Modal (NEW) -->
+    <div id="requestNoticeModal" class="fixed inset-0 z-[100] flex items-center justify-center hidden bg-white/80 backdrop-blur-md px-4 transition-opacity duration-300">
+        <div class="bg-white w-full max-w-md shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] border border-gray-100 p-8 modal-enter relative">
+            <button onclick="closeModal('requestNoticeModal')" class="absolute top-6 right-6 text-gray-400 hover:text-black"><i class="fa-solid fa-xmark text-xl"></i></button>
+            <div class="mb-6"><h3 class="font-logo font-light text-xl text-black mb-2" data-i18n="modal_req_notice_title">NOTICE</h3><div class="h-0.5 w-8 bg-black"></div></div>
+            <div class="space-y-4 mb-8">
+                <p class="text-sm text-gray-600 font-light leading-relaxed" data-i18n="modal_req_notice_desc">
+                    <!-- Text injected by JS -->
+                </p>
+            </div>
+            <button onclick="proceedToRequest()" class="w-full bg-black text-white h-12 hover:bg-gray-800 transition-colors duration-300 font-logo text-sm font-medium tracking-widest uppercase flex items-center justify-center gap-2">
+                <span data-i18n="btn_understand">I Understand</span> <i class="fa-solid fa-arrow-right"></i>
+            </button>
+        </div>
+    </div>
 
     <!-- 1. Download Warning Modal -->
     <div id="downloadModal" class="fixed inset-0 z-[100] flex items-center justify-center hidden bg-white/80 backdrop-blur-md px-4 transition-opacity duration-300">
@@ -529,6 +546,11 @@
                 modal_install_desc_oc3: "1. Download and unzip the file.<br>2. Open <strong>PMDG Operation Center 3</strong> then Import This File.",
                 btn_agree_download: "Agree & Download",
 
+                // Request Notice (NEW)
+                modal_req_notice_title: "BEFORE REQUEST",
+                modal_req_notice_desc: "Please note that submitting a request <strong>does not guarantee</strong> its creation. We review all requests but cannot fulfill every single one.<br><br>Also, please ensure your request is based on <strong>real-world, currently active aircraft</strong>. Fictional or retired liveries might not be accepted.",
+                btn_understand: "I Understand & Continue",
+
                 modal_request_title: "REQUEST LIVERY",
                 req_required_hint: "* Indicates required field",
                 // Updated Numbering
@@ -602,6 +624,11 @@
                 modal_install_desc: "1. 파일을 다운로드 후 압축을 해제하세요.<br>2. 폴더를 <span class='font-mono text-xs bg-gray-100 px-1 py-0.5 text-black'>Community</span> 경로에 넣으세요.",
                 modal_install_desc_oc3: "1. 파일을 다운로드 후 압축을 해제하세요.<br>2. <strong>PMDG Operation Center 3</strong> 실행 후 파일을 Import 하세요.",
                 btn_agree_download: "동의 및 다운로드",
+
+                // Request Notice (NEW)
+                modal_req_notice_title: "요청 전 확인사항",
+                modal_req_notice_desc: "리버리 요청이 접수되더라도 <strong>제작이 무조건 보장되는 것은 아님</strong>을 미리 양해 부탁드립니다.<br><br>또한, <strong>실제로 현역으로 운항 중인 기체 및 도장</strong>을 기준으로 신청해 주시기 바랍니다. 가상의 도장이나 퇴역 기체는 제작이 어려울 수 있습니다.",
+                btn_understand: "확인 후 계속하기",
 
                 modal_request_title: "리버리 요청",
                 req_required_hint: "* 표시는 필수 입력 사항입니다",
@@ -770,15 +797,23 @@
             document.getElementById('downloadModal').classList.remove('hidden');
             document.body.style.overflow = 'hidden';
         }
+
+        // New function to show the notice first
+        window.openRequestNotice = () => {
+            document.getElementById('requestNoticeModal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        // Proceed from Notice to Form
+        window.proceedToRequest = () => {
+            document.getElementById('requestNoticeModal').classList.add('hidden');
+            window.openRequestModal();
+        }
+
         window.openRequestModal = () => {
             document.getElementById('requestModal').classList.remove('hidden');
             document.body.style.overflow = 'hidden';
         }
-        
-        // --- NEW: Gallery Logic ---
-        window.galleryImages = [];
-        window.galleryIndex = 0;
-
         window.openMoreLink = (link) => {
             if (!link) { showToast("toast_ext_link_fail", "normal"); return; }
             
@@ -976,7 +1011,7 @@
             document.getElementById('upMoreLink').value = item.moreLink || '';
             
             // 3. Set Selectors
-            document.getElementById('upSim').value = item.simulator || 'msfs2024';
+            document.getElementById('upSim').value = item.simulator || 'msfs2024'; // Default to 2024 if missing
             document.getElementById('upInstallType').value = item.installType || 'manual';
             document.getElementById('upType').value = item.type || 'pmdg';
 
