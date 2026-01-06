@@ -445,13 +445,24 @@
                     <label class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1 block">Download Link (Google Drive)</label>
                     <input type="text" id="upLink" class="input-sharp">
                 </div>
+                <!-- Cloudinary Upload Section -->
                 <div>
-                    <label class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1 block">Image Link (Google Drive)</label>
-                    <input type="text" id="upImage" class="input-sharp">
+                    <label class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1 block">Image Link (Google Drive or Upload)</label>
+                    <div class="flex gap-2">
+                        <input type="text" id="upImage" class="input-sharp" placeholder="https://...">
+                        <input type="file" id="fileMain" accept="image/*" class="hidden" onchange="uploadMainImage(this)">
+                        <button onclick="document.getElementById('fileMain').click()" class="bg-gray-200 hover:bg-gray-300 px-4 rounded text-xs font-bold transition-colors" title="Upload Image"><i class="fa-solid fa-cloud-arrow-up"></i></button>
+                    </div>
+                    <p id="mainImgStatus" class="text-[10px] text-blue-500 mt-1 hidden">Uploading...</p>
                 </div>
                 <div>
                     <label class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1 block">More Screenshots Link (Optional)</label>
-                    <input type="text" id="upMoreLink" class="input-sharp">
+                    <div class="flex gap-2">
+                        <input type="text" id="upMoreLink" class="input-sharp" placeholder="URL1, URL2... (Comma separated)">
+                        <input type="file" id="fileScreenshots" accept="image/*" multiple class="hidden" onchange="uploadScreenshots(this)">
+                        <button onclick="document.getElementById('fileScreenshots').click()" class="bg-gray-200 hover:bg-gray-300 px-4 rounded text-xs font-bold transition-colors" title="Upload Multiple Images"><i class="fa-solid fa-images"></i></button>
+                    </div>
+                    <p id="screenshotsStatus" class="text-[10px] text-blue-500 mt-1 hidden">Uploading...</p>
                 </div>
             </div>
             <button onclick="submitLivery()" id="uploadBtn" class="w-full bg-black text-white h-12 hover:bg-gray-800 transition-colors duration-300 font-logo text-sm font-medium tracking-widest uppercase" data-i18n="btn_upload">Upload</button>
@@ -469,6 +480,32 @@
             <div class="flex gap-3">
                 <button onclick="closeModal('deleteConfirmModal')" class="flex-1 h-10 border border-gray-300 text-gray-600 text-xs font-bold uppercase rounded hover:bg-gray-50" data-i18n="btn_cancel">Cancel</button>
                 <button onclick="confirmDeleteAction()" class="flex-1 h-10 bg-red-600 text-white text-xs font-bold uppercase rounded hover:bg-red-700" data-i18n="btn_delete">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 7. Image Gallery Modal (NEW) -->
+    <div id="galleryModal" class="fixed inset-0 z-[300] flex items-center justify-center hidden bg-black/95 backdrop-blur-md transition-opacity duration-300">
+        <!-- Close Button -->
+        <button onclick="closeModal('galleryModal')" class="absolute top-6 right-6 text-white/70 hover:text-white z-50">
+            <i class="fa-solid fa-xmark text-3xl"></i>
+        </button>
+        
+        <!-- Main Image Container -->
+        <div class="relative w-full h-full flex items-center justify-center p-4 md:p-10">
+            <img id="galleryImg" src="" class="max-w-full max-h-full object-contain shadow-2xl rounded-sm transition-transform duration-300">
+            
+            <!-- Navigation Buttons -->
+            <button onclick="prevGalleryImage()" id="btnPrev" class="absolute left-4 md:left-8 top-1/2 -translate-y-1/2 text-white/50 hover:text-white bg-black/20 hover:bg-black/50 rounded-full w-12 h-12 flex items-center justify-center transition-all">
+                <i class="fa-solid fa-chevron-left text-xl"></i>
+            </button>
+            <button onclick="nextGalleryImage()" id="btnNext" class="absolute right-4 md:right-8 top-1/2 -translate-y-1/2 text-white/50 hover:text-white bg-black/20 hover:bg-black/50 rounded-full w-12 h-12 flex items-center justify-center transition-all">
+                <i class="fa-solid fa-chevron-right text-xl"></i>
+            </button>
+
+            <!-- Counter -->
+            <div class="absolute bottom-8 left-1/2 -translate-x-1/2 bg-black/50 text-white px-4 py-1 rounded-full text-xs font-logo tracking-widest backdrop-blur-sm">
+                <span id="galleryCurrent">1</span> / <span id="galleryTotal">5</span>
             </div>
         </div>
     </div>
@@ -675,6 +712,8 @@
         // Global Helpers
         window.convertImageUrl = function(url) {
             if (!url) return "https://placehold.co/800x450?text=No+Image";
+            
+            // Google Drive Logic
             if (url.includes('drive.google.com')) {
                 let id = '';
                 const parts = url.match(/\/d\/(.*?)\//);
@@ -683,6 +722,17 @@
                 // Reduced by ~35% from 1920 (1920 * 0.65 ≈ 1250)
                 if (id) return `https://drive.google.com/thumbnail?id=${id}&sz=w1250`;
             }
+
+            // Cloudinary Logic (Optimization)
+            if (url.includes('cloudinary.com')) {
+                // If it doesn't already have transformation params, insert them
+                // Simple heuristic: insert after /upload/
+                if (!url.includes('/w_')) {
+                    // Force optimization for better speed
+                    return url.replace('/upload/', '/upload/w_800,q_auto,f_auto/');
+                }
+            }
+            
             return url;
         }
 
@@ -724,11 +774,152 @@
             document.getElementById('requestModal').classList.remove('hidden');
             document.body.style.overflow = 'hidden';
         }
+        
+        // --- NEW: Gallery Logic ---
+        window.galleryImages = [];
+        window.galleryIndex = 0;
+
         window.openMoreLink = (link) => {
             if (!link) { showToast("toast_ext_link_fail", "normal"); return; }
+            
+            // Check if it contains commas (Multiple Images)
+            if (link.includes(',')) {
+                // Parse URLs
+                const images = link.split(',').map(url => url.trim()).filter(url => url.length > 0);
+                
+                if (images.length > 0) {
+                    window.openGallery(images);
+                    return;
+                }
+            }
+
+            // Fallback: Open as regular link
             window.open(link, '_blank');
         }
-        
+
+        window.openGallery = (images) => {
+            window.galleryImages = images;
+            window.galleryIndex = 0;
+            window.updateGalleryUI();
+            
+            document.getElementById('galleryModal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+            
+            // Add keyboard support
+            document.addEventListener('keydown', window.handleGalleryKeys);
+        }
+
+        window.updateGalleryUI = () => {
+            const imgEl = document.getElementById('galleryImg');
+            const currentEl = document.getElementById('galleryCurrent');
+            const totalEl = document.getElementById('galleryTotal');
+            const btnPrev = document.getElementById('btnPrev');
+            const btnNext = document.getElementById('btnNext');
+
+            // Set Image
+            imgEl.src = window.convertImageUrl(window.galleryImages[window.galleryIndex]);
+            
+            // Set Counter
+            currentEl.innerText = window.galleryIndex + 1;
+            totalEl.innerText = window.galleryImages.length;
+
+            // Show/Hide Nav Buttons
+            btnPrev.style.display = window.galleryImages.length > 1 ? 'flex' : 'none';
+            btnNext.style.display = window.galleryImages.length > 1 ? 'flex' : 'none';
+        }
+
+        window.nextImage = () => {
+            window.galleryIndex = (window.galleryIndex + 1) % window.galleryImages.length;
+            window.updateGalleryUI();
+        }
+        window.prevImage = () => {
+            window.galleryIndex = (window.galleryIndex - 1 + window.galleryImages.length) % window.galleryImages.length;
+            window.updateGalleryUI();
+        }
+        // Aliases for HTML onclick
+        window.nextGalleryImage = window.nextImage; 
+        window.prevGalleryImage = window.prevImage;
+
+        window.handleGalleryKeys = (e) => {
+            if (document.getElementById('galleryModal').classList.contains('hidden')) return;
+            if (e.key === 'ArrowRight') window.nextImage();
+            if (e.key === 'ArrowLeft') window.prevImage();
+            if (e.key === 'Escape') window.closeModal('galleryModal');
+        }
+
+        // --- Cloudinary Upload Logic ---
+        const CLOUD_NAME = 'dfww41z3g';
+        const UPLOAD_PRESET = 'choco_livery_upload';
+
+        window.uploadFileToCloudinary = async (file) => {
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('upload_preset', UPLOAD_PRESET);
+
+            try {
+                const response = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await response.json();
+                return data.secure_url;
+            } catch (error) {
+                console.error('Upload Error:', error);
+                window.showToast("Upload failed", "error", true);
+                return null;
+            }
+        }
+
+        window.uploadMainImage = async (input) => {
+            if (!input.files || input.files.length === 0) return;
+            
+            const statusEl = document.getElementById('mainImgStatus');
+            const urlInput = document.getElementById('upImage');
+            
+            statusEl.classList.remove('hidden');
+            statusEl.innerText = "Uploading...";
+            
+            const url = await window.uploadFileToCloudinary(input.files[0]);
+            
+            if (url) {
+                urlInput.value = url;
+                statusEl.innerText = "Done!";
+                setTimeout(() => statusEl.classList.add('hidden'), 2000);
+            } else {
+                statusEl.innerText = "Error!";
+            }
+            input.value = ''; // Reset
+        }
+
+        window.uploadScreenshots = async (input) => {
+            if (!input.files || input.files.length === 0) return;
+
+            const statusEl = document.getElementById('screenshotsStatus');
+            const urlInput = document.getElementById('upMoreLink');
+
+            statusEl.classList.remove('hidden');
+            statusEl.innerText = `Uploading ${input.files.length} images...`;
+
+            const promises = Array.from(input.files).map(file => window.uploadFileToCloudinary(file));
+            const urls = await Promise.all(promises);
+            
+            const validUrls = urls.filter(url => url !== null);
+            
+            if (validUrls.length > 0) {
+                const currentVal = urlInput.value.trim();
+                if (currentVal) {
+                    urlInput.value = currentVal + ',' + validUrls.join(',');
+                } else {
+                    urlInput.value = validUrls.join(',');
+                }
+                statusEl.innerText = "Done!";
+                setTimeout(() => statusEl.classList.add('hidden'), 2000);
+            } else {
+                statusEl.innerText = "Error!";
+            }
+            input.value = '';
+        }
+
         // Modified to handle "Reset" logic for new uploads
         window.openUploadModal = () => {
             // 1. Reset Global Edit ID
@@ -798,6 +989,12 @@
         window.closeModal = (modalId) => {
             const id = modalId || 'downloadModal';
             document.getElementById(id).classList.add('hidden');
+            
+            // Cleanups
+            if (id === 'galleryModal') {
+                document.removeEventListener('keydown', window.handleGalleryKeys);
+            }
+            
             window.currentLink = ''; 
             document.body.style.overflow = '';
         }
@@ -807,12 +1004,11 @@
         
         // Window click for modal backdrop - Modified to ignore Admin Dashboard
         window.onclick = function(event) {
-            if (event.target.classList.contains('fixed') && (event.target.classList.contains('z-[100]') || event.target.classList.contains('z-[200]'))) {
+            if (event.target.classList.contains('fixed') && (event.target.classList.contains('z-[100]') || event.target.classList.contains('z-[200]') || event.target.classList.contains('z-[300]'))) {
                 // EXCEPTION: If it is the Admin Dashboard, do NOT close
                 if (event.target.id === 'adminDashModal') return;
 
-                event.target.classList.add('hidden');
-                document.body.style.overflow = ''; 
+                window.closeModal(event.target.id);
             }
         }
 
