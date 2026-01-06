@@ -514,7 +514,10 @@
                 btn_logout: "Logout",
 
                 modal_upload_title: "UPLOAD LIVERY",
+                modal_edit_title: "EDIT LIVERY", // Added
                 btn_upload: "Upload",
+                btn_update: "Update", // Added
+                btn_edit: "Edit", // Added
 
                 modal_del_title: "DELETE CONFIRMATION",
                 modal_del_desc: "Are you sure you want to delete this item?<br>This action cannot be undone.",
@@ -585,7 +588,10 @@
                 btn_logout: "로그아웃",
 
                 modal_upload_title: "리버리 업로드",
+                modal_edit_title: "리버리 수정", // Added
                 btn_upload: "업로드",
+                btn_update: "수정하기", // Added
+                btn_edit: "수정", // Added
 
                 modal_del_title: "삭제 확인",
                 modal_del_desc: "정말 삭제하시겠습니까?<br>이 작업은 되돌릴 수 없습니다.",
@@ -722,10 +728,73 @@
             if (!link) { showToast("toast_ext_link_fail", "normal"); return; }
             window.open(link, '_blank');
         }
+        
+        // Modified to handle "Reset" logic for new uploads
         window.openUploadModal = () => {
+            // 1. Reset Global Edit ID
+            window.editingLiveryId = null;
+
+            // 2. Clear all inputs
+            document.getElementById('upTitle').value = '';
+            document.getElementById('upAddon').value = '';
+            document.getElementById('upVersion').value = 'v1.0';
+            document.getElementById('upLink').value = '';
+            document.getElementById('upImage').value = '';
+            document.getElementById('upMoreLink').value = '';
+            
+            // 3. Reset Selectors to Default
+            document.getElementById('upSim').value = 'msfs2024';
+            document.getElementById('upInstallType').value = 'manual';
+            document.getElementById('upType').value = 'pmdg';
+
+            // 4. Update UI Text (Upload Mode)
+            const titleEl = document.querySelector('[data-i18n="modal_upload_title"]');
+            if(titleEl) {
+                titleEl.setAttribute('data-i18n', 'modal_upload_title');
+                titleEl.innerText = window.getText('modal_upload_title');
+            }
+            const btn = document.getElementById('uploadBtn');
+            btn.innerText = window.getText('btn_upload');
+
             document.getElementById('uploadModal').classList.remove('hidden');
             document.body.style.overflow = 'hidden';
         }
+
+        // New Function: Open Modal in Edit Mode
+        window.openEditModal = (id) => {
+            // Find data from admin list cache
+            const item = window.adminLiveryList.find(i => i.id === id);
+            if (!item) return;
+
+            // 1. Set Global Edit ID
+            window.editingLiveryId = id;
+
+            // 2. Fill inputs with existing data
+            document.getElementById('upTitle').value = item.title || '';
+            document.getElementById('upAddon').value = item.addon || '';
+            document.getElementById('upVersion').value = item.version || '';
+            document.getElementById('upLink').value = item.link || '';
+            document.getElementById('upImage').value = item.image || '';
+            document.getElementById('upMoreLink').value = item.moreLink || '';
+            
+            // 3. Set Selectors
+            document.getElementById('upSim').value = item.simulator || 'msfs2024';
+            document.getElementById('upInstallType').value = item.installType || 'manual';
+            document.getElementById('upType').value = item.type || 'pmdg';
+
+            // 4. Update UI Text (Edit Mode)
+            const titleEl = document.querySelector('[data-i18n="modal_upload_title"]');
+            if(titleEl) {
+                titleEl.setAttribute('data-i18n', 'modal_edit_title'); // Change key for translation
+                titleEl.innerText = window.getText('modal_edit_title');
+            }
+            const btn = document.getElementById('uploadBtn');
+            btn.innerText = window.getText('btn_update');
+
+            document.getElementById('uploadModal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
         window.closeModal = (modalId) => {
             const id = modalId || 'downloadModal';
             document.getElementById(id).classList.add('hidden');
@@ -863,6 +932,10 @@
         // Variables for delete logic
         let currentDeleteId = null;
         let currentDeleteType = null;
+        
+        // Variable for edit logic
+        window.editingLiveryId = null;
+        window.adminLiveryList = []; // Cache for edit lookup
 
         // --- Data Logic ---
         window.loadLiveries = async () => {
@@ -963,9 +1036,7 @@
             const link = document.getElementById('upLink').value;
             const image = document.getElementById('upImage').value;
             const moreLink = document.getElementById('upMoreLink').value;
-            // NEW: Read simulator version
             const simulator = document.getElementById('upSim').value;
-            // NEW: Read install method
             const installType = document.getElementById('upInstallType').value;
             
             const btn = document.getElementById('uploadBtn');
@@ -974,21 +1045,41 @@
                 window.showToast("toast_miss_fields", "error");
                 return;
             }
-            btn.innerText = window.getText("toast_uploading");
+            
+            const isEdit = !!window.editingLiveryId;
+            btn.innerText = isEdit ? window.getText("toast_saving") : window.getText("toast_uploading");
             btn.disabled = true;
+
             try {
-                await addDoc(collection(db, "liveries"), {
-                    title, addon, type, version, link, image, moreLink, simulator, installType, createdAt: Timestamp.now()
-                });
-                window.showToast("toast_uploaded", "success");
+                const dataPayload = {
+                    title, addon, type, version, link, image, moreLink, simulator, installType
+                };
+
+                if (isEdit) {
+                    // Update existing
+                    await updateDoc(doc(db, "liveries", window.editingLiveryId), {
+                        ...dataPayload,
+                        updatedAt: Timestamp.now() // Optional: track update time
+                    });
+                    window.showToast("toast_status_update", "success");
+                } else {
+                    // Create new
+                    await addDoc(collection(db, "liveries"), {
+                        ...dataPayload,
+                        createdAt: Timestamp.now()
+                    });
+                    window.showToast("toast_uploaded", "success");
+                }
+
                 window.closeModal('uploadModal');
                 window.loadLiveries();
                 window.loadAdminLiveries();
             } catch (e) {
                 window.showToast("toast_upload_fail", "error");
             } finally {
-                btn.innerText = window.getText("btn_upload");
+                btn.innerText = isEdit ? window.getText("btn_update") : window.getText("btn_upload");
                 btn.disabled = false;
+                window.editingLiveryId = null; // Reset
             }
         };
 
@@ -1071,10 +1162,14 @@
                 const q = query(collection(db, "liveries"), orderBy("createdAt", "desc"));
                 const snapshot = await getDocs(q);
                 let html = '';
+                const list = []; // Temp list to store data
+
                 if(snapshot.empty) html = '<div class="text-center text-gray-400 py-10 text-sm">No uploaded liveries.</div>';
                 else {
                     snapshot.forEach(doc => {
                         const item = { id: doc.id, ...doc.data() };
+                        list.push(item); // Add to cache
+
                         html += `
                             <div class="bg-white p-4 rounded border border-gray-200 mb-3 flex justify-between items-center hover:shadow-sm">
                                 <div class="flex items-center gap-3">
@@ -1084,11 +1179,15 @@
                                         <p class="text-[10px] text-gray-500">${item.addon} • ${item.version} • <span class="text-blue-500">${item.simulator === 'msfs2024' ? '2024' : '2020'}</span></p>
                                     </div>
                                 </div>
-                                <button onclick="openDeleteModal('livery', '${item.id}')" class="text-xs text-red-500 hover:bg-red-50 px-2 py-1 rounded font-bold">Delete</button>
+                                <div class="flex gap-2">
+                                    <button onclick="openEditModal('${item.id}')" class="text-xs text-blue-500 hover:bg-blue-50 px-2 py-1 rounded font-bold">${window.getText('btn_edit')}</button>
+                                    <button onclick="openDeleteModal('livery', '${item.id}')" class="text-xs text-red-500 hover:bg-red-50 px-2 py-1 rounded font-bold">Delete</button>
+                                </div>
                             </div>
                         `;
                     });
                 }
+                window.adminLiveryList = list; // Save cache for Edit modal
                 listContainer.innerHTML = html;
             } catch(e) { console.error(e); }
         };
