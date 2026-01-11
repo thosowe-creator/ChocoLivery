@@ -1744,6 +1744,16 @@ window.loginAdmin = async () => {
             }
         };
 
+        const escapeHtml = (value) => {
+            if (value === null || value === undefined) return '';
+            return String(value)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        };
+
         window.loadAdminRequests = async () => {
             const listContainer = document.getElementById('requestListContainer');
             listContainer.innerHTML = '<div class="text-center text-gray-400 py-10 text-sm">Loading requests...</div>';
@@ -1798,6 +1808,9 @@ window.loginAdmin = async () => {
                     const date = req.createdAt?.seconds ? new Date(req.createdAt.seconds * 1000).toLocaleString('en-US') : '';
                     const simLabel = req.simulator === 'msfs2020' ? '2020' : '2024';
                     const catLabel = (req.category === 'pmdg_738') ? 'PMDG 738' : (req.category === 'fenix_a320') ? 'FENIX A320' : (req.category === 'fenix_a321') ? 'FENIX A321' : (req.category || req.aircraft || '');
+                    const safeReg = escapeHtml(req.reg);
+                    const safeAirline = escapeHtml(req.airline);
+                    const safeDescription = escapeHtml(req.description);
                     const imgHtml = (req.images || []).slice(0,5).map((l,i)=>`<a href="${l}" target="_blank" class="text-[10px] text-blue-600 px-2 py-1 rounded hover:underline">Img ${i+1}</a>`).join('');
 
                     const optionHtml = statusOptions.map(o => `<option value="${o.v}" ${o.v===req.status?'selected':''}>${o.t}</option>`).join('');
@@ -1808,11 +1821,11 @@ window.loginAdmin = async () => {
                                 <div class="flex-1">
                                     <div class="flex flex-wrap gap-2 mb-1">
                                         <span class="font-bold text-[10px] bg-black text-white px-2 py-0.5 rounded">${catLabel}</span>
-                                        <span class="font-bold text-[10px] bg-gray-200 text-gray-700 px-2 py-0.5 rounded">${req.reg}</span>
+                                        <span class="font-bold text-[10px] bg-gray-200 text-gray-700 px-2 py-0.5 rounded">${safeReg}</span>
                                         <span class="font-bold text-[10px] bg-blue-100 text-blue-800 px-2 py-0.5 rounded">${simLabel}</span>
                                     </div>
-                                    <h4 class="font-bold text-sm text-gray-800">${req.airline}</h4>
-                                    ${req.description ? `<p class="text-xs text-gray-500 mt-2 bg-gray-50 p-2 rounded">${req.description}</p>` : ''}
+                                    <h4 class="font-bold text-sm text-gray-800">${safeAirline}</h4>
+                                    ${safeDescription ? `<p class="text-xs text-gray-500 mt-2 bg-gray-50 p-2 rounded">${safeDescription}</p>` : ''}
                                     ${imgHtml ? `<div class="mt-2 flex flex-wrap gap-1">${imgHtml}</div>` : ''}
                                     <div class="text-[10px] text-gray-300 mt-2">${date}</div>
                                 </div>
@@ -1826,7 +1839,7 @@ window.loginAdmin = async () => {
                                     <label class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mt-1">Developer Comment</label>
                                     <textarea class="input-sharp h-20 resize-none" onblur="updateRequestComment('${req.id}', this.value)">${(req.developerComment || '').replace(/</g,'&lt;')}</textarea>
 
-                                    <button onclick="openDeleteModal('${req.id}','request')" class="h-9 border border-red-200 text-red-600 text-xs font-bold uppercase rounded hover:bg-red-50">Delete</button>
+                                    <button onclick="openDeleteModal('request', '${req.id}')" class="h-9 border border-red-200 text-red-600 text-xs font-bold uppercase rounded hover:bg-red-50">Delete</button>
                                 </div>
                             </div>
                         </div>
