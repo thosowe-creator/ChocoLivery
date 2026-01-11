@@ -235,10 +235,13 @@
                 <button onclick="filterItems('all')" id="btn-all" class="filter-tab active font-logo text-sm tracking-widest text-gray-400 hover:text-black uppercase" data-i18n="filter_all">
                     ALL
                 </button>
-                <button onclick="filterItems('pmdg')" id="btn-pmdg" class="filter-tab font-logo text-sm tracking-widest text-gray-400 hover:text-brand-pmdg uppercase">
-                    PMDG 737
+                <button onclick="filterItems('pmdg738')" id="btn-pmdg738738" class="filter-tab font-logo text-sm tracking-widest text-gray-400 hover:text-brand-pmdg uppercase">
+                    PMDG 738
                 </button>
-                <button onclick="filterItems('fenix')" id="btn-fenix" class="filter-tab font-logo text-sm tracking-widest text-gray-400 hover:text-brand-fenix uppercase">
+                <button onclick="filterItems('fenixA320')" id="btn-fenixA320" class="filter-tab font-logo text-sm tracking-widest text-gray-400 hover:text-brand-fenix uppercase">
+                    FENIX A320
+                </button>
+                <button onclick="filterItems('fenixA321')" id="btn-fenixA321A321" class="filter-tab font-logo text-sm tracking-widest text-gray-400 hover:text-brand-fenix uppercase">
                     FENIX A321
                 </button>
             </div>
@@ -271,9 +274,21 @@
 
     <!-- 1-A. Request Notice Modal (NEW) -->
     <div id="requestNoticeModal" class="fixed inset-0 z-[100] flex items-center justify-center hidden bg-white/80 backdrop-blur-md px-4 transition-opacity duration-300">
-        <div class="bg-white w-full max-w-md shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] border border-gray-100 p-8 modal-enter relative">
+        <div class="bg-white w-full max-w-3xl shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] border border-gray-100 p-8 modal-enter relative">
             <button onclick="closeModal('requestNoticeModal')" class="absolute top-6 right-6 text-gray-400 hover:text-black"><i class="fa-solid fa-xmark text-xl"></i></button>
             <div class="mb-6"><h3 class="font-logo font-light text-xl text-black mb-2" data-i18n="modal_req_notice_title">NOTICE</h3><div class="h-0.5 w-8 bg-black"></div></div>
+
+            <!-- Request Status (User View) -->
+            <div class="mb-6 border border-gray-100 rounded-md p-4 bg-gray-50">
+                <div class="flex items-center justify-between gap-3 mb-3">
+                    <h4 class="font-logo text-xs font-bold tracking-widest text-gray-600 uppercase" data-i18n="req_status_title">REQUEST STATUS</h4>
+                    <div id="requestStatusTabs" class="flex flex-wrap gap-2 justify-end"></div>
+                </div>
+                <div id="requestStatusPreview" class="space-y-2 max-h-72 overflow-y-auto text-xs text-gray-600">
+                    <div class="text-gray-400" data-i18n="req_status_loading">Loading request status...</div>
+                </div>
+            </div>
+
             <div class="space-y-4 mb-8">
                 <p class="text-sm text-gray-600 font-light leading-relaxed" data-i18n="modal_req_notice_desc">
                     <!-- Text injected by JS -->
@@ -287,7 +302,7 @@
 
     <!-- 1. Download Warning Modal -->
     <div id="downloadModal" class="fixed inset-0 z-[100] flex items-center justify-center hidden bg-white/80 backdrop-blur-md px-4 transition-opacity duration-300">
-        <div class="bg-white w-full max-w-lg shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] border border-gray-100 p-8 md:p-10 modal-enter relative">
+        <div class="bg-white w-full max-w-3xl shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] border border-gray-100 p-8 md:p-10 modal-enter relative">
             <button onclick="closeModal('downloadModal')" class="absolute top-6 right-6 text-gray-400 hover:text-black"><i class="fa-solid fa-xmark text-xl"></i></button>
             <div class="mb-8"><h3 class="font-logo font-light text-2xl text-black mb-2" data-i18n="modal_download_title">DOWNLOAD</h3><div class="h-0.5 w-12 bg-black"></div></div>
             <div class="space-y-6 mb-10">
@@ -315,7 +330,7 @@
 
     <!-- 2. Request Modal -->
     <div id="requestModal" class="fixed inset-0 z-[100] flex items-center justify-center hidden bg-white/80 backdrop-blur-md px-4 py-4 overflow-y-auto">
-        <div class="bg-white w-full max-w-lg shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] border border-gray-100 p-8 md:p-10 modal-enter relative my-auto">
+        <div class="bg-white w-full max-w-3xl shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] border border-gray-100 p-8 md:p-10 modal-enter relative my-auto">
             <button onclick="closeModal('requestModal')" class="absolute top-6 right-6 text-gray-400 hover:text-black"><i class="fa-solid fa-xmark text-xl"></i></button>
             <div class="mb-2"><h3 class="font-logo font-light text-2xl text-black mb-2" data-i18n="modal_request_title">REQUEST LIVERY</h3><div class="h-0.5 w-12 bg-black"></div></div>
             <p class="text-xs text-red-500 text-right mb-6 font-bold" data-i18n="req_required_hint">* Indicates required field</p>
@@ -329,8 +344,20 @@
                     </select>
                 </div>
                 <div>
-                    <label class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1 block"><span data-i18n="req_label_aircraft">2. Aircraft Type</span> <span class="text-red-500">*</span></label>
-                    <input type="text" id="reqAircraft" class="input-sharp" placeholder="ex) PMDG 737-800">
+                    <label class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1 block">
+                        <span data-i18n="req_label_category">2. Aircraft Category</span> <span class="text-red-500">*</span>
+                    </label>
+                    <select id="reqCategory" class="input-sharp">
+                        <option value="pmdg_738" data-i18n="opt_pmdg_738">PMDG 738</option>
+                        <option value="fenix_a320" data-i18n="opt_fenix_a320">FENIX A320</option>
+                        <option value="fenix_a321" data-i18n="opt_fenix_a321">FENIX A321</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1 block">
+                        <span data-i18n="req_label_config">Aircraft Configuration (Optional)</span>
+                    </label>
+                    <input type="text" id="reqAircraft" class="input-sharp" placeholder="">
                 </div>
                 <div>
                     <label class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1 block"><span data-i18n="req_label_airline">3. Airline Name</span> <span class="text-red-500">*</span></label>
@@ -416,7 +443,7 @@
 
     <!-- 5. Upload Livery Modal -->
     <div id="uploadModal" class="fixed inset-0 z-[100] flex items-center justify-center hidden bg-white/80 backdrop-blur-md px-4 py-4 overflow-y-auto">
-        <div class="bg-white w-full max-w-lg shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] border border-gray-100 p-8 md:p-10 modal-enter relative my-auto">
+        <div class="bg-white w-full max-w-3xl shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] border border-gray-100 p-8 md:p-10 modal-enter relative my-auto">
             <button onclick="closeModal('uploadModal')" class="absolute top-6 right-6 text-gray-400 hover:text-black"><i class="fa-solid fa-xmark text-xl"></i></button>
             <div class="mb-6"><h3 class="font-logo font-light text-2xl text-black mb-2" data-i18n="modal_upload_title">UPLOAD LIVERY</h3><div class="h-0.5 w-12 bg-black"></div></div>
             
@@ -447,10 +474,11 @@
                         <input type="text" id="upAddon" class="input-sharp">
                     </div>
                     <div>
-                        <label class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1 block">Type</label>
-                        <select id="upType" class="input-sharp">
-                            <option value="pmdg">PMDG</option>
-                            <option value="fenix">FENIX</option>
+                        <label class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1 block">Category</label>
+                        <select id="upCategory" class="input-sharp">
+                            <option value="pmdg738">PMDG 738</option>
+                            <option value="fenixA320">FENIX A320</option>
+                            <option value="fenixA321">FENIX A321</option>
                         </select>
                     </div>
                 </div>
@@ -609,6 +637,22 @@
                 
                 card_more_shots: "More Screenshots",
                 card_download: "Download"
+                ,
+                req_status_title: "REQUEST STATUS",
+                req_status_loading: "Loading request status...",
+                chip_requested: "REQUESTED",
+                chip_reviewed: "REVIEWED",
+                chip_in_progress: "IN PROGRESS",
+                chip_rejected: "REJECTED",
+                req_label_category: "2. Aircraft Category",
+                req_label_config: "Aircraft Configuration (Optional)",
+                opt_pmdg_738: "PMDG 738",
+                opt_fenix_a320: "FENIX A320",
+                opt_fenix_a321: "FENIX A321"
+                ,
+                no_requests: "No requests to show."
+
+
             },
             ko: {
                 nav_request: "리버리 요청",
@@ -688,6 +732,22 @@
 
                 card_more_shots: "스크린샷 더보기",
                 card_download: "다운로드"
+                ,
+                req_status_title: "현재 요청 현황",
+                req_status_loading: "요청 현황을 불러오는 중입니다...",
+                chip_requested: "요청완료",
+                chip_reviewed: "확인완료",
+                chip_in_progress: "진행중",
+                chip_rejected: "반려",
+                req_label_category: "2. 기체 분류",
+                req_label_config: "Aircraft Configuration (선택)",
+                opt_pmdg_738: "PMDG 738",
+                opt_fenix_a320: "FENIX A320",
+                opt_fenix_a321: "FENIX A321"
+                ,
+                no_requests: "표시할 요청이 없습니다."
+
+
             }
         };
 
@@ -726,6 +786,10 @@
             if(window.storedLiveries) {
                 renderLiveries(window.storedLiveries);
             }
+
+            // Refresh request status chip labels (if built)
+            if(window.__refreshRequestStatusTabLabels) window.__refreshRequestStatusTabLabels();
+
         };
 
         // Helper to get text for JS
@@ -799,9 +863,238 @@
         }
 
         // New function to show the notice first
-        window.openRequestNotice = () => {
+        
+        // --- Request Status (User View) with Chips + Staged (priority) loading ---
+        window.__requestStatusActive = window.__requestStatusActive || {
+            requested: true,
+            reviewed: true,
+            in_progress: true,
+            rejected: true
+        };
+
+        window.__statusPriority = {
+            requested: 0,   // 요청완료
+            reviewed: 1,    // 확인완료
+            in_progress: 2, // 진행중
+            rejected: 3     // 반려
+        };
+
+        
+        // --- Request Status Tabs (single-filter) ---
+        window.__requestStatusTab = window.__requestStatusTab || 'requested';
+
+        window.ensureRequestStatusTabs = () => {
+            const tabWrap = document.getElementById('requestStatusTabs');
+            if (!tabWrap) return;
+
+            if (tabWrap.dataset.built === "1") return;
+            tabWrap.dataset.built = "1";
+
+            const tabs = [
+                { key: 'requested', labelKey: 'chip_requested' },
+                { key: 'reviewed', labelKey: 'chip_reviewed' },
+                { key: 'in_progress', labelKey: 'chip_in_progress' },
+                { key: 'rejected', labelKey: 'chip_rejected' }
+            ];
+
+            tabWrap.className = "flex flex-wrap gap-2 justify-end";
+
+            tabWrap.innerHTML = tabs.map(t => `
+                <button type="button"
+                        class="px-3 py-1.5 rounded-md border text-[11px] font-bold tracking-widest uppercase transition-colors"
+                        data-status="${t.key}"
+                        aria-pressed="false">
+                    ${window.getText ? window.getText(t.labelKey) : t.key}
+                </button>
+            `).join('');
+
+            const refresh = () => {
+                tabWrap.querySelectorAll('button[data-status]').forEach(btn => {
+                    const k = btn.getAttribute('data-status');
+                    const on = (k === window.__requestStatusTab);
+                    btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+                    btn.classList.toggle('bg-black', on);
+                    btn.classList.toggle('text-white', on);
+                    btn.classList.toggle('border-black', on);
+                    btn.classList.toggle('bg-white', !on);
+                    btn.classList.toggle('text-gray-700', !on);
+                    btn.classList.toggle('border-gray-200', !on);
+                });
+            };
+
+            refresh();
+
+            tabWrap.addEventListener('click', (e) => {
+                const btn = e.target.closest('button[data-status]');
+                if (!btn) return;
+                window.__requestStatusTab = btn.getAttribute('data-status');
+                refresh();
+                if (window.__requestCache) window.renderRequestStatusPreview(window.__requestCache);
+            });
+
+            window.__refreshRequestStatusTabLabels = () => {
+                tabWrap.querySelectorAll('button[data-status]').forEach(btn => {
+                    const k = btn.getAttribute('data-status');
+                    const keyMap = {
+                        requested: 'chip_requested',
+                        reviewed: 'chip_reviewed',
+                        in_progress: 'chip_in_progress',
+                        rejected: 'chip_rejected'
+                    };
+                    const labelKey = keyMap[k] || k;
+                    btn.innerText = window.getText ? window.getText(labelKey) : k;
+                });
+            };
+        };
+
+window.renderRequestStatusPreview = (list) => {
+            const wrap = document.getElementById('requestStatusPreview');
+            if (!wrap) return;
+
+            const tab = window.__requestStatusTab || 'requested';
+
+            const filtered = (list || []).filter(x => x.status === tab);
+
+            if (!filtered.length) {
+                wrap.innerHTML = `<div class="text-gray-400">${window.getText ? window.getText('req_status_loading') : 'No requests to show.'}</div>`;
+                return;
+            }
+
+            const pri = window.__statusPriority || {};
+            filtered.sort((a, b) => {
+                const pa = pri[a.status] ?? 99;
+                const pb = pri[b.status] ?? 99;
+                if (pa !== pb) return pa - pb;
+                return (b.createdAt || 0) - (a.createdAt || 0);
+            });
+
+            const statusTextMap = {
+                requested: window.getText ? window.getText('chip_requested') : 'REQUESTED',
+                reviewed: window.getText ? window.getText('chip_reviewed') : 'REVIEWED',
+                in_progress: window.getText ? window.getText('chip_in_progress') : 'IN PROGRESS',
+                rejected: window.getText ? window.getText('chip_rejected') : 'REJECTED'
+            };
+
+            wrap.innerHTML = filtered.slice(0, 20).map(item => {
+                const st = statusTextMap[item.status] || item.status;
+                const reg = (item.reg || '').toUpperCase();
+                const airline = item.airline || '';
+                const category = item.category || '';
+                const comment = (item.developerComment || '').trim();
+
+                return `
+                    <div class="border border-gray-100 bg-white p-3 rounded-md">
+                        <div class="flex items-start justify-between gap-3">
+                            <div class="min-w-0">
+                                <div class="font-bold text-gray-900 text-xs tracking-wider">${reg || '-'}</div>
+                                <div class="text-[11px] text-gray-600 mt-0.5">${airline || '-'}</div>
+                                <div class="text-[11px] text-gray-500 mt-1">${category || '-'}</div>
+                                ${comment ? `<div class="text-[11px] text-gray-500 mt-1.5"><span class="font-bold text-gray-700">DEV</span> · ${comment}</div>` : ``}
+                            </div>
+                            <div class="shrink-0 text-[10px] font-bold tracking-widest uppercase px-2 py-1 border border-gray-200 rounded-full text-gray-700">
+                                ${st}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        };
+
+        window.__inferCategory = (aircraftText) => {
+            const s = (aircraftText || '').toLowerCase();
+            if (s.includes('pmdg') || s.includes('738') || s.includes('737')) return 'pmdg_738';
+            if (s.includes('a320')) return 'fenix_a320';
+            if (s.includes('a321')) return 'fenix_a321';
+            if (s.includes('fenix')) return 'fenix_a321';
+            return '';
+        };
+
+        
+window.loadRequestStatusPreview = async () => {
+    window.ensureRequestStatusTabs && window.ensureRequestStatusTabs();
+
+    const wrap = document.getElementById('requestStatusPreview');
+    if (wrap) wrap.innerHTML = `<div class="text-gray-400">${window.getText ? window.getText('req_status_loading') : 'Loading request status...'}</div>`;
+
+    // Instant paint from cache (better perceived speed)
+    if (window.__requestCache && window.__requestCache.length) {
+        window.renderRequestStatusPreview(window.__requestCache);
+    }
+
+    // Normalize legacy statuses into: requested, reviewed, in_progress, rejected, done
+    const normalizeStatus = (data) => {
+        const raw = (data && data.status) ? String(data.status).toLowerCase() : "";
+        if (raw === "requested" || raw === "request" || raw === "pending" || raw === "req") return "requested";
+        if (raw === "reviewed" || raw === "confirmed" || raw === "checked") return "reviewed";
+        if (raw === "in_progress" || raw === "progress" || raw === "working" || raw === "wip") return "in_progress";
+        if (raw === "rejected" || raw === "reject" || raw === "denied") return "rejected";
+        if (raw === "done" || raw === "completed" || raw === "complete") return "done";
+        // Legacy boolean
+        if (data && data.completed === true) return "done";
+        // Default if unknown/missing
+        return "requested";
+    };
+
+    try {
+        const list = [];
+        const seen = new Set();
+
+        // Single query: newest first. This works even if legacy docs don't have "status".
+        // NOTE: if some legacy docs have no createdAt, they won't be returned by this query.
+        // That's acceptable for the status preview; they can be migrated later if desired.
+        const q = query(
+            collection(window.db, "requests"),
+            orderBy("createdAt", "desc"),
+            limit(80)
+        );
+        const snapshot = await getDocs(q);
+
+        snapshot.forEach(d => {
+            if (seen.has(d.id)) return;
+            seen.add(d.id);
+            const data = d.data() || {};
+
+            const createdAt = data.createdAt && typeof data.createdAt.toMillis === 'function'
+                ? data.createdAt.toMillis()
+                : 0;
+
+            const status = normalizeStatus(data);
+            if (status === "done") return; // exclude completed from preview (as agreed)
+
+            list.push({
+                id: d.id,
+                createdAt,
+                simulator: data.simulator || 'msfs2024',
+                category: data.category || (typeof __inferCategory === 'function' ? __inferCategory(data.aircraft) : ""),
+                aircraft: data.aircraft || '',
+                airline: data.airline || '',
+                reg: (data.reg || '').toUpperCase(),
+                status,
+                developerComment: data.developerComment || ''
+            });
+        });
+
+        window.__requestCache = list.slice();
+        if (!window.__requestCache.length && wrap) {
+            wrap.innerHTML = `<div class="text-gray-400 text-xs">${window.getText ? window.getText('no_requests') : '표시할 요청이 없습니다.'}</div>`;
+            return;
+        }
+
+        window.renderRequestStatusPreview(window.__requestCache);
+
+        if (window.checkRequestDuplicate) window.checkRequestDuplicate();
+    } catch (e) {
+        console.error(e);
+        if (wrap) wrap.innerHTML = `<div class="text-red-500 text-xs">Failed to load request status.</div>`;
+    }
+};
+
+
+window.openRequestNotice = () => {
             document.getElementById('requestNoticeModal').classList.remove('hidden');
             document.body.style.overflow = 'hidden';
+            // Load request status (staged) when the notice opens
+            if (window.loadRequestStatusPreview) window.loadRequestStatusPreview();
         }
 
         // Proceed from Notice to Form
@@ -813,6 +1106,18 @@
         window.openRequestModal = () => {
             document.getElementById('requestModal').classList.remove('hidden');
             document.body.style.overflow = 'hidden';
+
+            // Load public request status preview (top section)
+            if(window.loadRequestStatusPreview) window.loadRequestStatusPreview();
+
+            // Bind duplicate detection once
+            if(!window.__reqDupBound && window.bindRequestDuplicateCheck) {
+                window.__reqDupBound = true;
+                window.bindRequestDuplicateCheck();
+            }
+
+            // Initial check
+            if(window.checkRequestDuplicate) window.checkRequestDuplicate();
         }
         window.openMoreLink = (link) => {
             if (!link) { showToast("toast_ext_link_fail", "normal"); return; }
@@ -978,7 +1283,7 @@
             // 3. Reset Selectors to Default
             document.getElementById('upSim').value = 'msfs2024';
             document.getElementById('upInstallType').value = 'manual';
-            document.getElementById('upType').value = 'pmdg';
+            document.getElementById('upCategory').value = 'pmdg';
 
             // 4. Update UI Text (Upload Mode)
             const titleEl = document.querySelector('[data-i18n="modal_upload_title"]');
@@ -1013,7 +1318,7 @@
             // 3. Set Selectors
             document.getElementById('upSim').value = item.simulator || 'msfs2024'; // Default to 2024 if missing
             document.getElementById('upInstallType').value = item.installType || 'manual';
-            document.getElementById('upType').value = item.type || 'pmdg';
+            document.getElementById('upCategory').value = (item.category || window.inferCategory(item)) || 'pmdg738';
 
             // 4. Update UI Text (Edit Mode)
             const titleEl = document.querySelector('[data-i18n="modal_upload_title"]');
@@ -1057,7 +1362,7 @@
         // Render Logic
         const grid = document.getElementById('liveryGrid');
         const emptyState = document.getElementById('emptyState');
-        const buttons = { all: document.getElementById('btn-all'), pmdg: document.getElementById('btn-pmdg'), fenix: document.getElementById('btn-fenix') };
+        const buttons = { all: document.getElementById('btn-all'), pmdg738: document.getElementById('btn-pmdg738738'), fenixA320: document.getElementById('btn-fenixA320'), fenixA321: document.getElementById('btn-fenixA321A321') };
 
         window.renderLiveries = (data) => {
             // No global assignment here to prevent overwriting master data
@@ -1109,6 +1414,27 @@
         window.currentSim = 'msfs2024'; // Default changed to 2024
         window.currentType = 'all';     // Default
 
+        window.inferCategory = (item) => {
+            // Backward compatibility for older docs without `category`
+            const t = item.type || '';
+            const addon = (item.addon || '').toLowerCase();
+            if (item.category) return item.category;
+            if (t === 'pmdg') return 'pmdg738';
+            if (t === 'fenix') {
+                if (addon.includes('a320')) return 'fenixA320';
+                if (addon.includes('a321')) return 'fenixA321';
+                // Default for older Fenix entries in this project
+                return 'fenixA321';
+            }
+            // Heuristic fallback
+            if (addon.includes('737-800') || addon.includes('738')) return 'pmdg738';
+            if (addon.includes('a320')) return 'fenixA320';
+            if (addon.includes('a321')) return 'fenixA321';
+            return null;
+        };
+
+        
+
         window.switchSim = (sim) => {
             window.currentSim = sim;
             // UI Toggle
@@ -1126,8 +1452,8 @@
                 const btn = buttons[key];
                 btn.classList.remove('active', 'text-black', 'border-black');
                 btn.classList.add('text-gray-400');
-                if (key === 'pmdg') btn.classList.remove('text-brand-pmdg');
-                if (key === 'fenix') btn.classList.remove('text-brand-fenix');
+                if (key === 'pmdg738') btn.classList.remove('text-brand-pmdg');
+                if (key === 'fenixA320' || key === 'fenixA321') btn.classList.remove('text-brand-fenix');
             });
             buttons[type].classList.remove('text-gray-400');
             buttons[type].classList.add('active'); 
@@ -1139,7 +1465,8 @@
                     const isSimMatch = itemSim === window.currentSim;
 
                     // Check Type
-                    const isTypeMatch = type === 'all' || item.type === type;
+                    const cat = window.inferCategory(item) || item.category;
+                    const isTypeMatch = type === 'all' || cat === type;
 
                     return isSimMatch && isTypeMatch;
                 });
@@ -1151,8 +1478,23 @@
     <!-- Firebase Module -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getFirestore, collection, addDoc, getDocs, deleteDoc, updateDoc, doc, Timestamp, query, orderBy } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-        import { getAuth, signInWithEmailAndPassword, signOut, signInAnonymously, setPersistence, browserSessionPersistence } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, addDoc, getDocs, getDoc, deleteDoc, updateDoc, doc, setDoc, query, where, orderBy, limit, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        // Expose Firestore helpers for non-module scripts
+        window.__fs = { collection, addDoc, getDocs, getDoc, deleteDoc, updateDoc, doc, setDoc, query, where, orderBy, limit, serverTimestamp };
+        window.collection = collection;
+        window.addDoc = addDoc;
+        window.getDocs = getDocs;
+        window.getDoc = getDoc;
+        window.deleteDoc = deleteDoc;
+        window.updateDoc = updateDoc;
+        window.doc = doc;
+        window.setDoc = setDoc;
+        window.query = query;
+        window.where = where;
+        window.orderBy = orderBy;
+        window.limit = limit;
+        window.serverTimestamp = serverTimestamp;
+        import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged, setPersistence, browserSessionPersistence, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyB8Nn-SCdjfA_H-8hi_660UsjwTtxc0x8M",
@@ -1165,6 +1507,9 @@
 
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
+        
+            // Expose Firestore handles to non-module scripts
+            window.db = db;
         const auth = getAuth(app);
 
         // Variables for delete logic
@@ -1192,17 +1537,18 @@
             } catch (e) {
                 console.error("Load Error:", e);
                 window.renderLiveries([]); 
-                window.showToast("toast_db_fail", "error");
+                console.error(e);
+                window.showToast(window.getText("toast_db_fail") + " " + (e?.message || String(e)), "error", true);
             }
         };
 
         // --- Auth & Functions Binding ---
         window.submitRequest = async () => {
-            // New Sim Field
             const simulator = document.getElementById('reqSim').value;
-            const aircraft = document.getElementById('reqAircraft').value.trim();
+            const category = document.getElementById('reqCategory') ? document.getElementById('reqCategory').value : null;
+            const aircraft = document.getElementById('reqAircraft').value.trim(); // optional details
             const airline = document.getElementById('reqAirline').value.trim();
-            const reg = document.getElementById('reqReg').value.trim();
+            const reg = document.getElementById('reqReg').value.trim().toUpperCase();
             const desc = document.getElementById('reqDesc').value.trim();
             const imgInputs = document.querySelectorAll('.req-img-input');
             const btn = document.getElementById('submitBtn');
@@ -1210,8 +1556,15 @@
             const images = [];
             imgInputs.forEach(input => { if (input.value.trim()) images.push(input.value.trim()); });
 
-            if(!aircraft || !airline || !reg || images.length === 0) {
+            // Basic validation
+            if(!category || !airline || !reg || images.length === 0) {
                 window.showToast("toast_miss_fields", "error");
+                return;
+            }
+
+            // Duplicate guard (live-check sets this)
+            if(window.__reqDuplicateBlock === true) {
+                window.showToast("이미 요청되었거나 반려/완료 처리된 리버리입니다.", "error", true);
                 return;
             }
 
@@ -1220,20 +1573,34 @@
 
             try {
                 if (!auth.currentUser) await signInAnonymously(auth);
-                await addDoc(collection(db, "requests"), {
-                    simulator, // Save Sim Version
-                    aircraft, airline, reg, images, description: desc, completed: false, createdAt: Timestamp.now()
+
+                await addDoc(collection(window.db, "requests"), {
+                    simulator,
+                    category,
+                    aircraft,
+                    airline,
+                    reg,
+                    images,
+                    description: desc,
+                    status: "requested",          // 요청 완료 (default)
+                    developerComment: "",         // dev comment
+                    createdAt: serverTimestamp()
                 });
+
                 window.showToast("toast_req_success", "success");
                 window.closeModal('requestModal');
-                
+
                 // Reset Fields
                 document.getElementById('reqSim').value = 'msfs2024';
+                if(document.getElementById('reqCategory')) document.getElementById('reqCategory').value = 'pmdg_738';
                 document.getElementById('reqAircraft').value = '';
                 document.getElementById('reqAirline').value = '';
                 document.getElementById('reqReg').value = '';
                 document.getElementById('reqDesc').value = '';
                 imgInputs.forEach(input => input.value = '');
+
+                // Refresh preview cache
+                if(window.loadRequestStatusPreview) window.loadRequestStatusPreview();
             } catch (e) {
                 window.showToast("Error: " + e.message, "error", true);
             } finally {
@@ -1242,7 +1609,25 @@
             }
         };
 
-        window.loginAdmin = async () => {
+        
+
+        window.bindRequestDuplicateCheck = () => {
+            const simEl = document.getElementById('reqSim');
+            const catEl = document.getElementById('reqCategory');
+            const regEl = document.getElementById('reqReg');
+            if(!simEl || !catEl || !regEl) return;
+
+            let t = null;
+            const debounced = () => {
+                if(t) clearTimeout(t);
+                t = setTimeout(() => window.checkRequestDuplicate(), 200);
+            };
+
+            simEl.addEventListener('change', debounced);
+            catEl.addEventListener('change', debounced);
+            regEl.addEventListener('input', debounced);
+        };
+window.loginAdmin = async () => {
             const email = document.getElementById('adminEmail').value;
             const pw = document.getElementById('adminPw').value;
             if(!email || !pw) return window.showToast("toast_enter_creds", "error");
@@ -1254,8 +1639,16 @@
                 window.openAdminDashboard();
                 window.showToast("toast_admin_login", "success");
             } catch (e) {
-                window.showToast("toast_login_fail", "error");
+            console.error("Admin login failed:", e);
+            const code = e && e.code ? e.code : "unknown";
+            const msg = e && e.message ? e.message : String(e);
+            const detail = `${code}: ${msg}`;
+            if (window.showToast) {
+                window.showToast(detail, "error", true);
+            } else {
+                alert(detail);
             }
+}
         };
 
         window.logoutAdmin = async () => {
@@ -1269,7 +1662,8 @@
         window.submitLivery = async () => {
             const title = document.getElementById('upTitle').value;
             const addon = document.getElementById('upAddon').value;
-            const type = document.getElementById('upType').value;
+            const category = document.getElementById('upCategory').value;
+            const type = category.startsWith('pmdg') ? 'pmdg' : 'fenix';
             const version = document.getElementById('upVersion').value;
             const link = document.getElementById('upLink').value;
             const image = document.getElementById('upImage').value;
@@ -1290,21 +1684,21 @@
 
             try {
                 const dataPayload = {
-                    title, addon, type, version, link, image, moreLink, simulator, installType
+                    title, addon, type, category, version, link, image, moreLink, simulator, installType
                 };
 
                 if (isEdit) {
                     // Update existing
                     await updateDoc(doc(db, "liveries", window.editingLiveryId), {
                         ...dataPayload,
-                        updatedAt: Timestamp.now() // Optional: track update time
+                        updatedAt: serverTimestamp() // Optional: track update time
                     });
                     window.showToast("toast_status_update", "success");
                 } else {
                     // Create new
                     await addDoc(collection(db, "liveries"), {
                         ...dataPayload,
-                        createdAt: Timestamp.now()
+                        createdAt: serverTimestamp()
                     });
                     window.showToast("toast_uploaded", "success");
                 }
@@ -1313,7 +1707,8 @@
                 window.loadLiveries();
                 window.loadAdminLiveries();
             } catch (e) {
-                window.showToast("toast_upload_fail", "error");
+                console.error(e);
+                window.showToast(window.getText("toast_upload_fail") + (e?.message || String(e)), "error", true);
             } finally {
                 btn.innerText = isEdit ? window.getText("btn_update") : window.getText("btn_upload");
                 btn.disabled = false;
@@ -1353,44 +1748,119 @@
             const listContainer = document.getElementById('requestListContainer');
             listContainer.innerHTML = '<div class="text-center text-gray-400 py-10 text-sm">Loading requests...</div>';
             try {
-                const q = query(collection(db, "requests"), orderBy("createdAt", "desc"));
+                const q = query(collection(window.db, "requests"), orderBy("createdAt", "desc"));
                 const snapshot = await getDocs(q);
-                let html = '';
-                if(snapshot.empty) html = '<div class="text-center text-gray-400 py-10 text-sm">No requests found.</div>';
-                else {
-                    snapshot.forEach(doc => {
-                        const req = { id: doc.id, ...doc.data() };
-                        const date = new Date(req.createdAt.seconds * 1000).toLocaleString('en-US');
-                        let imgHtml = '';
-                        if(req.images) req.images.forEach((l, i) => imgHtml += `<a href="${l}" target="_blank" class="text-xs bg-blue-50 text-blue-600 px-2 py-1 rounded hover:underline">Img ${i+1}</a> `);
-                        const isCompleted = req.completed === true;
-                        
-                        // Added simulator info in display
-                        const simLabel = req.simulator ? (req.simulator === 'msfs2024' ? '2024' : '2020') : '2020';
 
-                        html += `
-                            <div class="bg-white p-4 rounded border border-gray-200 mb-3 hover:shadow-sm transition-all relative ${isCompleted ? 'opacity-50' : ''}">
-                                <div class="absolute top-4 right-4 flex gap-2">
-                                    <button onclick="toggleComplete('${req.id}', ${isCompleted})" class="text-[10px] font-bold px-2 py-1 rounded uppercase ${isCompleted ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600'}">${isCompleted ? 'Completed' : 'Pending'}</button>
-                                    <button onclick="openDeleteModal('request', '${req.id}')" class="text-[10px] font-bold px-2 py-1 rounded uppercase bg-red-50 text-red-500">Delete</button>
-                                </div>
-                                <div class="pr-20">
-                                    <div class="flex gap-2 mb-1">
-                                        <span class="font-bold text-xs bg-black text-white px-1.5 rounded">${req.aircraft}</span> 
-                                        <span class="font-bold text-xs bg-gray-200 text-gray-700 px-1.5 rounded">${req.reg}</span>
-                                        <span class="font-bold text-xs bg-blue-100 text-blue-800 px-1.5 rounded">${simLabel}</span>
+                const items = [];
+                snapshot.forEach(d => {
+                    const data = d.data();
+                    const status = data.status || (data.completed === true ? 'done' : 'requested'); // back-compat
+                    items.push({
+                        id: d.id,
+                        simulator: data.simulator || 'msfs2024',
+                        category: data.category || __inferCategory(data.aircraft),
+                        aircraft: data.aircraft || '',
+                        airline: data.airline || '',
+                        reg: (data.reg || '').toUpperCase(),
+                        description: data.description || '',
+                        images: data.images || [],
+                        status,
+                        developerComment: data.developerComment || '',
+                        createdAt: data.createdAt
+                    });
+                });
+
+                // Sort: done always at bottom; otherwise by status priority then createdAt desc
+                const rank = { in_progress: 1, reviewed: 2, requested: 3, rejected: 4, done: 99 };
+                items.sort((a,b) => {
+                    const ra = rank[a.status] ?? 50;
+                    const rb = rank[b.status] ?? 50;
+                    if(ra !== rb) return ra - rb;
+                    const ta = a.createdAt?.seconds ? a.createdAt.seconds : 0;
+                    const tb = b.createdAt?.seconds ? b.createdAt.seconds : 0;
+                    return tb - ta;
+                });
+
+                if(items.length === 0) {
+                    listContainer.innerHTML = '<div class="text-center text-gray-400 py-10 text-sm">No requests found.</div>';
+                    return;
+                }
+
+                const statusOptions = [
+                    {v:'requested', t:'요청 완료'},
+                    {v:'reviewed', t:'확인 완료'},
+                    {v:'in_progress', t:'진행중'},
+                    {v:'rejected', t:'반려'},
+                    {v:'done', t:'완료'}
+                ];
+
+                listContainer.innerHTML = items.map(req => {
+                    const date = req.createdAt?.seconds ? new Date(req.createdAt.seconds * 1000).toLocaleString('en-US') : '';
+                    const simLabel = req.simulator === 'msfs2020' ? '2020' : '2024';
+                    const catLabel = (req.category === 'pmdg_738') ? 'PMDG 738' : (req.category === 'fenix_a320') ? 'FENIX A320' : (req.category === 'fenix_a321') ? 'FENIX A321' : (req.category || req.aircraft || '');
+                    const imgHtml = (req.images || []).slice(0,5).map((l,i)=>`<a href="${l}" target="_blank" class="text-[10px] text-blue-600 px-2 py-1 rounded hover:underline">Img ${i+1}</a>`).join('');
+
+                    const optionHtml = statusOptions.map(o => `<option value="${o.v}" ${o.v===req.status?'selected':''}>${o.t}</option>`).join('');
+
+                    return `
+                        <div class="bg-white p-4 rounded border border-gray-200 mb-3 hover:shadow-sm transition-all">
+                            <div class="flex items-start justify-between gap-4">
+                                <div class="flex-1">
+                                    <div class="flex flex-wrap gap-2 mb-1">
+                                        <span class="font-bold text-[10px] bg-black text-white px-2 py-0.5 rounded">${catLabel}</span>
+                                        <span class="font-bold text-[10px] bg-gray-200 text-gray-700 px-2 py-0.5 rounded">${req.reg}</span>
+                                        <span class="font-bold text-[10px] bg-blue-100 text-blue-800 px-2 py-0.5 rounded">${simLabel}</span>
                                     </div>
                                     <h4 class="font-bold text-sm text-gray-800">${req.airline}</h4>
                                     ${req.description ? `<p class="text-xs text-gray-500 mt-2 bg-gray-50 p-2 rounded">${req.description}</p>` : ''}
-                                    <div class="mt-2 flex gap-1">${imgHtml}</div>
+                                    ${imgHtml ? `<div class="mt-2 flex flex-wrap gap-1">${imgHtml}</div>` : ''}
                                     <div class="text-[10px] text-gray-300 mt-2">${date}</div>
                                 </div>
+
+                                <div class="w-56 flex flex-col gap-2">
+                                    <label class="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Status</label>
+                                    <select class="input-sharp !py-2" onchange="updateRequestStatus('${req.id}', this.value)">
+                                        ${optionHtml}
+                                    </select>
+
+                                    <label class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mt-1">Developer Comment</label>
+                                    <textarea class="input-sharp h-20 resize-none" onblur="updateRequestComment('${req.id}', this.value)">${(req.developerComment || '').replace(/</g,'&lt;')}</textarea>
+
+                                    <button onclick="openDeleteModal('${req.id}','request')" class="h-9 border border-red-200 text-red-600 text-xs font-bold uppercase rounded hover:bg-red-50">Delete</button>
+                                </div>
                             </div>
-                        `;
-                    });
-                }
-                listContainer.innerHTML = html;
-            } catch(e) { console.error(e); }
+                        </div>
+                    `;
+                }).join('');
+            } catch(e) {
+                console.error(e);
+                listContainer.innerHTML = '<div class="text-center text-gray-400 py-10 text-sm">Failed to load requests.</div>';
+            }
+        };
+
+        window.updateRequestStatus = async (id, status) => {
+            try {
+                await updateDoc(doc(db, "requests", id), { status });
+                window.showToast("상태가 업데이트되었습니다.", "success", true);
+                // Refresh public preview cache if open
+                if(window.loadRequestStatusPreview) window.loadRequestStatusPreview();
+                // Refresh admin list to re-sort
+                window.loadAdminRequests();
+            } catch(e) {
+                console.error(e);
+                window.showToast("업데이트 실패: " + e.message, "error", true);
+            }
+        };
+
+        window.updateRequestComment = async (id, comment) => {
+            try {
+                await updateDoc(doc(db, "requests", id), { developerComment: comment || "" });
+                window.showToast("코멘트가 저장되었습니다.", "success", true);
+                if(window.loadRequestStatusPreview) window.loadRequestStatusPreview();
+            } catch(e) {
+                console.error(e);
+                window.showToast("업데이트 실패: " + e.message, "error", true);
+            }
         };
 
         window.loadAdminLiveries = async () => {
@@ -1471,4 +1941,3 @@
     </script>
 </body>
 </html>
-
