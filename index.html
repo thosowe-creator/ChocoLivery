@@ -412,6 +412,7 @@
                     <div class="flex gap-4">
                         <button onclick="switchAdminTab('requests')" id="tab-requests" class="admin-tab-btn active" data-i18n="dash_tab_req">Requests</button>
                         <button onclick="switchAdminTab('liveries')" id="tab-liveries" class="admin-tab-btn" data-i18n="dash_tab_liv">Liveries</button>
+                        <button onclick="switchAdminTab('settings')" id="tab-settings" class="admin-tab-btn" data-i18n="dash_tab_settings">Settings</button>
                     </div>
                 </div>
                 <div class="flex gap-3">
@@ -437,6 +438,64 @@
                     </div>
                     <div id="liveryListContainer"><div class="text-center text-gray-400 py-10 text-sm">Loading liveries...</div></div>
                 </div>
+
+                <!-- Tab: Settings -->
+                <div id="view-settings" class="hidden">
+                    <div class="flex justify-between items-center mb-6">
+                        <h4 class="font-bold text-sm text-gray-600" data-i18n="dash_settings_title">SITE SETTINGS</h4>
+                    </div>
+
+                    <div class="space-y-6 bg-white border border-gray-200 rounded-lg p-6">
+                        <div class="flex items-center justify-between">
+                            <div class="text-sm font-bold text-gray-700" data-i18n="setting_request_open">Accept Requests</div>
+                            <label class="inline-flex items-center gap-2 text-sm">
+                                <input type="checkbox" id="settingRequestOpen" class="accent-black">
+                                <span class="text-gray-500 text-xs font-bold tracking-widest uppercase" id="settingRequestOpenLabel">ON</span>
+                            </label>
+                        </div>
+
+                        <div class="flex items-center justify-between">
+                            <div class="text-sm font-bold text-gray-700" data-i18n="setting_notice_enabled">Enable Notice Popup</div>
+                            <label class="inline-flex items-center gap-2 text-sm">
+                                <input type="checkbox" id="settingNoticeEnabled" class="accent-black" checked>
+                                <span class="text-gray-500 text-xs font-bold tracking-widest uppercase" id="settingNoticeEnabledLabel">ON</span>
+                            </label>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="space-y-2">
+                                <div class="text-xs font-bold text-gray-500 uppercase tracking-widest">KO</div>
+                                <label class="text-[11px] font-bold text-gray-500 uppercase tracking-widest" data-i18n="setting_notice_title">Notice Title</label>
+                                <input type="text" id="settingNoticeTitleKo" class="input-sharp" placeholder="...">
+                                <label class="text-[11px] font-bold text-gray-500 uppercase tracking-widest" data-i18n="setting_notice_body">Notice Body (HTML allowed)</label>
+                                <textarea id="settingNoticeBodyKo" class="input-sharp h-32 resize-none"></textarea>
+
+                                <div class="pt-4 border-t border-gray-100"></div>
+                                <label class="text-[11px] font-bold text-gray-500 uppercase tracking-widest" data-i18n="setting_closed_title">Closed Title</label>
+                                <input type="text" id="settingClosedTitleKo" class="input-sharp" placeholder="...">
+                                <label class="text-[11px] font-bold text-gray-500 uppercase tracking-widest" data-i18n="setting_closed_body">Closed Message (HTML allowed)</label>
+                                <textarea id="settingClosedBodyKo" class="input-sharp h-28 resize-none"></textarea>
+                            </div>
+
+                            <div class="space-y-2">
+                                <div class="text-xs font-bold text-gray-500 uppercase tracking-widest">EN</div>
+                                <label class="text-[11px] font-bold text-gray-500 uppercase tracking-widest" data-i18n="setting_notice_title">Notice Title</label>
+                                <input type="text" id="settingNoticeTitleEn" class="input-sharp" placeholder="...">
+                                <label class="text-[11px] font-bold text-gray-500 uppercase tracking-widest" data-i18n="setting_notice_body">Notice Body (HTML allowed)</label>
+                                <textarea id="settingNoticeBodyEn" class="input-sharp h-32 resize-none"></textarea>
+
+                                <div class="pt-4 border-t border-gray-100"></div>
+                                <label class="text-[11px] font-bold text-gray-500 uppercase tracking-widest" data-i18n="setting_closed_title">Closed Title</label>
+                                <input type="text" id="settingClosedTitleEn" class="input-sharp" placeholder="...">
+                                <label class="text-[11px] font-bold text-gray-500 uppercase tracking-widest" data-i18n="setting_closed_body">Closed Message (HTML allowed)</label>
+                                <textarea id="settingClosedBodyEn" class="input-sharp h-28 resize-none"></textarea>
+                            </div>
+                        </div>
+
+                        <button onclick="saveRequestSettings()" class="w-full bg-black text-white h-12 hover:bg-gray-800 transition-colors duration-300 font-logo text-sm font-medium tracking-widest uppercase" data-i18n="btn_save_settings">Save Settings</button>
+                    </div>
+                </div>
+</div>
             </div>
         </div>
     </div>
@@ -650,7 +709,20 @@
                 opt_fenix_a320: "FENIX A320",
                 opt_fenix_a321: "FENIX A321"
                 ,
-                no_requests: "No requests to show."
+                no_requests: "No requests to show.",
+                dash_tab_settings: "Settings",
+                dash_settings_title: "SITE SETTINGS",
+                setting_request_open: "Accept Requests",
+                setting_notice_enabled: "Enable Notice Popup",
+                setting_notice_title: "Notice Title",
+                setting_notice_body: "Notice Body (HTML allowed)",
+                setting_closed_title: "Closed Title",
+                setting_closed_body: "Closed Message (HTML allowed)",
+                btn_save_settings: "Save Settings",
+                toast_settings_saved: "Settings saved.",
+                toast_settings_save_fail: "Failed to save settings: ",
+                toast_requests_closed: "Requests are currently closed."
+
 
 
             },
@@ -745,7 +817,20 @@
                 opt_fenix_a320: "FENIX A320",
                 opt_fenix_a321: "FENIX A321"
                 ,
-                no_requests: "표시할 요청이 없습니다."
+                no_requests: "표시할 요청이 없습니다.",
+                dash_tab_settings: "설정",
+                dash_settings_title: "사이트 설정",
+                setting_request_open: "리버리 요청 받기",
+                setting_notice_enabled: "안내 팝업 사용",
+                setting_notice_title: "안내 제목",
+                setting_notice_body: "안내 내용 (HTML 가능)",
+                setting_closed_title: "마감 제목",
+                setting_closed_body: "마감 안내 (HTML 가능)",
+                btn_save_settings: "설정 저장",
+                toast_settings_saved: "설정이 저장되었습니다.",
+                toast_settings_save_fail: "설정 저장 실패: ",
+                toast_requests_closed: "현재 리버리 요청이 마감되었습니다."
+
 
 
             }
@@ -1090,9 +1175,11 @@ window.loadRequestStatusPreview = async () => {
 };
 
 
-window.openRequestNotice = () => {
+window.openRequestNotice = async () => {
             document.getElementById('requestNoticeModal').classList.remove('hidden');
             document.body.style.overflow = 'hidden';
+            // Apply admin-controlled notice/closed text
+            if (window.__applyNoticeTextFromSettings) await window.__applyNoticeTextFromSettings();
             // Load request status (staged) when the notice opens
             if (window.loadRequestStatusPreview) window.loadRequestStatusPreview();
         }
@@ -1544,6 +1631,14 @@ window.openRequestNotice = () => {
 
         // --- Auth & Functions Binding ---
         window.submitRequest = async () => {
+            // Gate: block submissions when requests are closed
+            if (window.getRequestSettings) {
+                const s = await window.getRequestSettings();
+                if (s && s.requestOpen === false) {
+                    window.showToast && window.showToast("toast_requests_closed", "normal");
+                    return;
+                }
+            }
             const simulator = document.getElementById('reqSim').value;
             const category = document.getElementById('reqCategory') ? document.getElementById('reqCategory').value : null;
             const aircraft = document.getElementById('reqAircraft').value.trim(); // optional details
@@ -1936,17 +2031,193 @@ window.loginAdmin = async () => {
         }
 
         window.switchAdminTab = (tab) => {
-            document.getElementById('view-requests').classList.add('hidden');
-            document.getElementById('view-liveries').classList.add('hidden');
-            document.getElementById('tab-requests').classList.remove('active');
-            document.getElementById('tab-liveries').classList.remove('active');
-            
-            document.getElementById(`view-${tab}`).classList.remove('hidden');
-            document.getElementById(`tab-${tab}`).classList.add('active');
+            const tabs = ['requests', 'liveries', 'settings'];
+            tabs.forEach(t => {
+                const view = document.getElementById(`view-${t}`);
+                const btn = document.getElementById(`tab-${t}`);
+                if (view) view.classList.add('hidden');
+                if (btn) btn.classList.remove('active');
+            });
+
+            const activeView = document.getElementById(`view-${tab}`);
+            const activeBtn = document.getElementById(`tab-${tab}`);
+            if (activeView) activeView.classList.remove('hidden');
+            if (activeBtn) activeBtn.classList.add('active');
 
             if(tab === 'requests') window.loadAdminRequests();
             if(tab === 'liveries') window.loadAdminLiveries();
+            if(tab === 'settings') window.loadRequestSettingsToUI && window.loadRequestSettingsToUI();
         }
+
+        // --- Request Settings (Request Open/Close + Notice text) ---
+        window.__requestSettingsCache = null;
+        window.__requestSettingsCacheAt = 0;
+
+        window.__getDefaultRequestSettings = () => {
+            const en = (typeof translations !== 'undefined' && translations.en) ? translations.en : {};
+            const ko = (typeof translations !== 'undefined' && translations.ko) ? translations.ko : {};
+            return {
+                requestOpen: true,
+                noticeEnabled: true,
+                noticeTitle: {
+                    en: en.modal_req_notice_title || "BEFORE REQUEST",
+                    ko: ko.modal_req_notice_title || "요청 전 확인사항"
+                },
+                noticeBody: {
+                    en: en.modal_req_notice_desc || "Please note that submitting a request does not guarantee its creation.",
+                    ko: ko.modal_req_notice_desc || "리버리 요청이 접수되더라도 제작이 무조건 보장되는 것은 아닙니다."
+                },
+                closedTitle: {
+                    en: "REQUESTS CLOSED",
+                    ko: "요청 마감"
+                },
+                closedBody: {
+                    en: "Requests are currently closed. Please come back later.",
+                    ko: "현재 리버리 요청이 마감되었습니다. 나중에 다시 와줘."
+                }
+            };
+        };
+
+        window.getRequestSettings = async () => {
+            const now = Date.now();
+            if (window.__requestSettingsCache && (now - window.__requestSettingsCacheAt) < 15000) {
+                return window.__requestSettingsCache;
+            }
+            const defaults = window.__getDefaultRequestSettings();
+            try {
+                if (!window.db || !window.doc || !window.getDoc) {
+                    // Firebase not ready yet
+                    window.__requestSettingsCache = defaults;
+                    window.__requestSettingsCacheAt = now;
+                    return defaults;
+                }
+                const ref = window.doc(window.db, "settings", "request");
+                const snap = await window.getDoc(ref);
+                if (snap.exists()) {
+                    const data = snap.data() || {};
+                    const merged = {
+                        ...defaults,
+                        ...data,
+                        noticeTitle: { ...defaults.noticeTitle, ...(data.noticeTitle || {}) },
+                        noticeBody: { ...defaults.noticeBody, ...(data.noticeBody || {}) },
+                        closedTitle: { ...defaults.closedTitle, ...(data.closedTitle || {}) },
+                        closedBody: { ...defaults.closedBody, ...(data.closedBody || {}) },
+                    };
+                    window.__requestSettingsCache = merged;
+                    window.__requestSettingsCacheAt = now;
+                    return merged;
+                } else {
+                    // Create defaults once (merge)
+                    await window.setDoc(ref, defaults, { merge: true });
+                    window.__requestSettingsCache = defaults;
+                    window.__requestSettingsCacheAt = now;
+                    return defaults;
+                }
+            } catch (e) {
+                console.error("Failed to load request settings:", e);
+                window.__requestSettingsCache = defaults;
+                window.__requestSettingsCacheAt = now;
+                return defaults;
+            }
+        };
+
+        window.__updateToggleLabel = (idCheckbox, idLabel) => {
+            const cb = document.getElementById(idCheckbox);
+            const lb = document.getElementById(idLabel);
+            if (!cb || !lb) return;
+            lb.textContent = cb.checked ? "ON" : "OFF";
+        };
+
+        window.loadRequestSettingsToUI = async () => {
+            const s = await window.getRequestSettings();
+            const reqOpen = document.getElementById("settingRequestOpen");
+            const noticeOn = document.getElementById("settingNoticeEnabled");
+            if (reqOpen) reqOpen.checked = !!s.requestOpen;
+            if (noticeOn) noticeOn.checked = !!s.noticeEnabled;
+
+            const setVal = (id, v) => { const el = document.getElementById(id); if (el) el.value = v || ""; };
+            setVal("settingNoticeTitleKo", s.noticeTitle?.ko);
+            setVal("settingNoticeBodyKo", s.noticeBody?.ko);
+            setVal("settingClosedTitleKo", s.closedTitle?.ko);
+            setVal("settingClosedBodyKo", s.closedBody?.ko);
+
+            setVal("settingNoticeTitleEn", s.noticeTitle?.en);
+            setVal("settingNoticeBodyEn", s.noticeBody?.en);
+            setVal("settingClosedTitleEn", s.closedTitle?.en);
+            setVal("settingClosedBodyEn", s.closedBody?.en);
+
+            window.__updateToggleLabel("settingRequestOpen", "settingRequestOpenLabel");
+            window.__updateToggleLabel("settingNoticeEnabled", "settingNoticeEnabledLabel");
+
+            // bind once
+            if (!window.__settingsToggleBound) {
+                window.__settingsToggleBound = true;
+                ["settingRequestOpen","settingNoticeEnabled"].forEach(id=>{
+                    const cb=document.getElementById(id);
+                    if(cb) cb.addEventListener("change", ()=>window.__updateToggleLabel(id, id+"Label"));
+                });
+            }
+        };
+
+        window.saveRequestSettings = async () => {
+            try {
+                const getVal = (id) => (document.getElementById(id)?.value || "").trim();
+                const getChecked = (id) => !!document.getElementById(id)?.checked;
+
+                const payload = {
+                    requestOpen: getChecked("settingRequestOpen"),
+                    noticeEnabled: getChecked("settingNoticeEnabled"),
+                    noticeTitle: { ko: getVal("settingNoticeTitleKo"), en: getVal("settingNoticeTitleEn") },
+                    noticeBody: { ko: getVal("settingNoticeBodyKo"), en: getVal("settingNoticeBodyEn") },
+                    closedTitle: { ko: getVal("settingClosedTitleKo"), en: getVal("settingClosedTitleEn") },
+                    closedBody: { ko: getVal("settingClosedBodyKo"), en: getVal("settingClosedBodyEn") },
+                    updatedAt: window.serverTimestamp ? window.serverTimestamp() : null
+                };
+
+                if (!window.db || !window.doc || !window.setDoc) throw new Error("Firebase not ready");
+                const ref = window.doc(window.db, "settings", "request");
+                await window.setDoc(ref, payload, { merge: true });
+
+                // refresh cache
+                window.__requestSettingsCache = null;
+                await window.getRequestSettings();
+
+                window.showToast && window.showToast("toast_settings_saved", "success");
+            } catch (e) {
+                console.error(e);
+                if (window.showToast) window.showToast(window.getText ? (window.getText("toast_settings_save_fail") + (e.message || "")) : ("Save failed: " + (e.message || "")), "error", true);
+            }
+        };
+
+        window.__applyNoticeTextFromSettings = async () => {
+            const s = await window.getRequestSettings();
+            const lang = (typeof currentLang !== 'undefined') ? currentLang : "en";
+
+            const titleEl = document.querySelector('#requestNoticeModal [data-i18n="modal_req_notice_title"]');
+            const descEl = document.querySelector('#requestNoticeModal [data-i18n="modal_req_notice_desc"]');
+            const btn = document.querySelector('#requestNoticeModal button[onclick="proceedToRequest()"]');
+
+            if (!titleEl || !descEl || !btn) return;
+
+            if (!s.requestOpen) {
+                titleEl.innerHTML = (lang === "ko" ? (s.closedTitle?.ko || "요청 마감") : (s.closedTitle?.en || "REQUESTS CLOSED"));
+                descEl.innerHTML = (lang === "ko" ? (s.closedBody?.ko || "현재 리버리 요청이 마감되었습니다.") : (s.closedBody?.en || "Requests are currently closed."));
+                btn.classList.add("hidden");
+                return;
+            }
+
+            // open
+            btn.classList.remove("hidden");
+
+            if (s.noticeEnabled) {
+                titleEl.innerHTML = (lang === "ko" ? (s.noticeTitle?.ko || window.getText?.("modal_req_notice_title") || "요청 전 확인사항") : (s.noticeTitle?.en || window.getText?.("modal_req_notice_title") || "BEFORE REQUEST"));
+                descEl.innerHTML = (lang === "ko" ? (s.noticeBody?.ko || window.getText?.("modal_req_notice_desc") || "") : (s.noticeBody?.en || window.getText?.("modal_req_notice_desc") || ""));
+            } else {
+                // fallback to translations
+                titleEl.innerHTML = window.getText ? window.getText("modal_req_notice_title") : (lang==="ko"?"요청 전 확인사항":"BEFORE REQUEST");
+                descEl.innerHTML = window.getText ? window.getText("modal_req_notice_desc") : "";
+            }
+        };
 
         // Start App
         window.setLanguage('en'); // Initialize text on load (Fix for empty notice)
