@@ -496,28 +496,216 @@
                                 <div class="text-xs font-bold text-gray-500 uppercase tracking-widest">KO</div>
                                 <label class="text-[11px] font-bold text-gray-500 uppercase tracking-widest" data-i18n="setting_notice_title">Notice Title</label>
                                 <input type="text" id="settingNoticeTitleKo" class="input-sharp" placeholder="...">
-                                <label class="text-[11px] font-bold text-gray-500 uppercase tracking-widest" data-i18n="setting_notice_body">Notice Body (HTML allowed)</label>
-                                <textarea id="settingNoticeBodyKo" class="input-sharp h-32 resize-none"></textarea>
+                                <label class="text-[11px] font-bold text-gray-500 uppercase tracking-widest" data-i18n="setting_notice_body">Notice Body</label>
+                                                                <div class="mt-2 rounded-xl border border-gray-200 bg-white overflow-hidden">
+                                    <div class="flex flex-wrap items-center gap-2 px-3 py-2 border-b border-gray-100 bg-gray-50">
+                                        <button type="button"
+                                            class="px-2 py-1 text-xs font-semibold rounded-lg border border-gray-200 hover:bg-white transition"
+                                            data-rte-target="settingNoticeBodyKo" data-rte-action="bold">
+                                            B
+                                        </button>
+
+                                        <div class="w-px h-5 bg-gray-200 mx-1"></div>
+
+                                        <label class="text-[11px] font-semibold text-gray-500">Size</label>
+                                        <select
+                                            class="text-xs rounded-lg border border-gray-200 px-2 py-1 bg-white"
+                                            data-rte-target="settingNoticeBodyKo" data-rte-action="size">
+                                            <option value="">—</option>
+                                            <option value="12">12</option>
+                                            <option value="14">14</option>
+                                            <option value="16">16</option>
+                                            <option value="18">18</option>
+                                            <option value="20">20</option>
+                                            <option value="24">24</option>
+                                        </select>
+
+                                        <div class="w-px h-5 bg-gray-200 mx-1"></div>
+
+                                        <label class="text-[11px] font-semibold text-gray-500">Color</label>
+                                        <select
+                                            class="text-xs rounded-lg border border-gray-200 px-2 py-1 bg-white"
+                                            data-rte-target="settingNoticeBodyKo" data-rte-action="color">
+                                            <option value="">—</option>
+                                            <option value="#111827">Black</option>
+                                            <option value="#6b7280">Gray</option>
+                                            <option value="#a16207">Brown</option>
+                                            <option value="#e11d48">Fenix</option>
+                                            <option value="#0284c7">PMDG</option>
+                                        </select>
+
+                                        <span class="text-[11px] text-gray-400 ml-auto select-none">Ctrl/Cmd + B supported</span>
+                                    </div>
+
+                                    <div id="settingNoticeBodyKo_editor"
+                                        class="min-h-[8rem] p-3 text-sm leading-relaxed focus:outline-none"
+                                        contenteditable="true"
+                                        spellcheck="false"></div>
+                                </div>
+
+                                <textarea id="settingNoticeBodyKo" class="hidden"></textarea>
+    
 
                                 <div class="pt-4 border-t border-gray-100"></div>
                                 <label class="text-[11px] font-bold text-gray-500 uppercase tracking-widest" data-i18n="setting_closed_title">Closed Title</label>
                                 <input type="text" id="settingClosedTitleKo" class="input-sharp" placeholder="...">
-                                <label class="text-[11px] font-bold text-gray-500 uppercase tracking-widest" data-i18n="setting_closed_body">Closed Message (HTML allowed)</label>
-                                <textarea id="settingClosedBodyKo" class="input-sharp h-28 resize-none"></textarea>
+                                <label class="text-[11px] font-bold text-gray-500 uppercase tracking-widest" data-i18n="setting_closed_body">Closed Message</label>
+                                                                <div class="mt-2 rounded-xl border border-gray-200 bg-white overflow-hidden">
+                                    <div class="flex flex-wrap items-center gap-2 px-3 py-2 border-b border-gray-100 bg-gray-50">
+                                        <button type="button"
+                                            class="px-2 py-1 text-xs font-semibold rounded-lg border border-gray-200 hover:bg-white transition"
+                                            data-rte-target="settingClosedBodyKo" data-rte-action="bold">
+                                            B
+                                        </button>
+
+                                        <div class="w-px h-5 bg-gray-200 mx-1"></div>
+
+                                        <label class="text-[11px] font-semibold text-gray-500">Size</label>
+                                        <select
+                                            class="text-xs rounded-lg border border-gray-200 px-2 py-1 bg-white"
+                                            data-rte-target="settingClosedBodyKo" data-rte-action="size">
+                                            <option value="">—</option>
+                                            <option value="12">12</option>
+                                            <option value="14">14</option>
+                                            <option value="16">16</option>
+                                            <option value="18">18</option>
+                                            <option value="20">20</option>
+                                            <option value="24">24</option>
+                                        </select>
+
+                                        <div class="w-px h-5 bg-gray-200 mx-1"></div>
+
+                                        <label class="text-[11px] font-semibold text-gray-500">Color</label>
+                                        <select
+                                            class="text-xs rounded-lg border border-gray-200 px-2 py-1 bg-white"
+                                            data-rte-target="settingClosedBodyKo" data-rte-action="color">
+                                            <option value="">—</option>
+                                            <option value="#111827">Black</option>
+                                            <option value="#6b7280">Gray</option>
+                                            <option value="#a16207">Brown</option>
+                                            <option value="#e11d48">Fenix</option>
+                                            <option value="#0284c7">PMDG</option>
+                                        </select>
+
+                                        <span class="text-[11px] text-gray-400 ml-auto select-none">Ctrl/Cmd + B supported</span>
+                                    </div>
+
+                                    <div id="settingClosedBodyKo_editor"
+                                        class="min-h-[7rem] p-3 text-sm leading-relaxed focus:outline-none"
+                                        contenteditable="true"
+                                        spellcheck="false"></div>
+                                </div>
+
+                                <textarea id="settingClosedBodyKo" class="hidden"></textarea>
+    
                             </div>
 
                             <div class="space-y-2">
                                 <div class="text-xs font-bold text-gray-500 uppercase tracking-widest">EN</div>
                                 <label class="text-[11px] font-bold text-gray-500 uppercase tracking-widest" data-i18n="setting_notice_title">Notice Title</label>
                                 <input type="text" id="settingNoticeTitleEn" class="input-sharp" placeholder="...">
-                                <label class="text-[11px] font-bold text-gray-500 uppercase tracking-widest" data-i18n="setting_notice_body">Notice Body (HTML allowed)</label>
-                                <textarea id="settingNoticeBodyEn" class="input-sharp h-32 resize-none"></textarea>
+                                <label class="text-[11px] font-bold text-gray-500 uppercase tracking-widest" data-i18n="setting_notice_body">Notice Body</label>
+                                                                <div class="mt-2 rounded-xl border border-gray-200 bg-white overflow-hidden">
+                                    <div class="flex flex-wrap items-center gap-2 px-3 py-2 border-b border-gray-100 bg-gray-50">
+                                        <button type="button"
+                                            class="px-2 py-1 text-xs font-semibold rounded-lg border border-gray-200 hover:bg-white transition"
+                                            data-rte-target="settingNoticeBodyEn" data-rte-action="bold">
+                                            B
+                                        </button>
+
+                                        <div class="w-px h-5 bg-gray-200 mx-1"></div>
+
+                                        <label class="text-[11px] font-semibold text-gray-500">Size</label>
+                                        <select
+                                            class="text-xs rounded-lg border border-gray-200 px-2 py-1 bg-white"
+                                            data-rte-target="settingNoticeBodyEn" data-rte-action="size">
+                                            <option value="">—</option>
+                                            <option value="12">12</option>
+                                            <option value="14">14</option>
+                                            <option value="16">16</option>
+                                            <option value="18">18</option>
+                                            <option value="20">20</option>
+                                            <option value="24">24</option>
+                                        </select>
+
+                                        <div class="w-px h-5 bg-gray-200 mx-1"></div>
+
+                                        <label class="text-[11px] font-semibold text-gray-500">Color</label>
+                                        <select
+                                            class="text-xs rounded-lg border border-gray-200 px-2 py-1 bg-white"
+                                            data-rte-target="settingNoticeBodyEn" data-rte-action="color">
+                                            <option value="">—</option>
+                                            <option value="#111827">Black</option>
+                                            <option value="#6b7280">Gray</option>
+                                            <option value="#a16207">Brown</option>
+                                            <option value="#e11d48">Fenix</option>
+                                            <option value="#0284c7">PMDG</option>
+                                        </select>
+
+                                        <span class="text-[11px] text-gray-400 ml-auto select-none">Ctrl/Cmd + B supported</span>
+                                    </div>
+
+                                    <div id="settingNoticeBodyEn_editor"
+                                        class="min-h-[8rem] p-3 text-sm leading-relaxed focus:outline-none"
+                                        contenteditable="true"
+                                        spellcheck="false"></div>
+                                </div>
+
+                                <textarea id="settingNoticeBodyEn" class="hidden"></textarea>
+    
 
                                 <div class="pt-4 border-t border-gray-100"></div>
                                 <label class="text-[11px] font-bold text-gray-500 uppercase tracking-widest" data-i18n="setting_closed_title">Closed Title</label>
                                 <input type="text" id="settingClosedTitleEn" class="input-sharp" placeholder="...">
-                                <label class="text-[11px] font-bold text-gray-500 uppercase tracking-widest" data-i18n="setting_closed_body">Closed Message (HTML allowed)</label>
-                                <textarea id="settingClosedBodyEn" class="input-sharp h-28 resize-none"></textarea>
+                                <label class="text-[11px] font-bold text-gray-500 uppercase tracking-widest" data-i18n="setting_closed_body">Closed Message</label>
+                                                                <div class="mt-2 rounded-xl border border-gray-200 bg-white overflow-hidden">
+                                    <div class="flex flex-wrap items-center gap-2 px-3 py-2 border-b border-gray-100 bg-gray-50">
+                                        <button type="button"
+                                            class="px-2 py-1 text-xs font-semibold rounded-lg border border-gray-200 hover:bg-white transition"
+                                            data-rte-target="settingClosedBodyEn" data-rte-action="bold">
+                                            B
+                                        </button>
+
+                                        <div class="w-px h-5 bg-gray-200 mx-1"></div>
+
+                                        <label class="text-[11px] font-semibold text-gray-500">Size</label>
+                                        <select
+                                            class="text-xs rounded-lg border border-gray-200 px-2 py-1 bg-white"
+                                            data-rte-target="settingClosedBodyEn" data-rte-action="size">
+                                            <option value="">—</option>
+                                            <option value="12">12</option>
+                                            <option value="14">14</option>
+                                            <option value="16">16</option>
+                                            <option value="18">18</option>
+                                            <option value="20">20</option>
+                                            <option value="24">24</option>
+                                        </select>
+
+                                        <div class="w-px h-5 bg-gray-200 mx-1"></div>
+
+                                        <label class="text-[11px] font-semibold text-gray-500">Color</label>
+                                        <select
+                                            class="text-xs rounded-lg border border-gray-200 px-2 py-1 bg-white"
+                                            data-rte-target="settingClosedBodyEn" data-rte-action="color">
+                                            <option value="">—</option>
+                                            <option value="#111827">Black</option>
+                                            <option value="#6b7280">Gray</option>
+                                            <option value="#a16207">Brown</option>
+                                            <option value="#e11d48">Fenix</option>
+                                            <option value="#0284c7">PMDG</option>
+                                        </select>
+
+                                        <span class="text-[11px] text-gray-400 ml-auto select-none">Ctrl/Cmd + B supported</span>
+                                    </div>
+
+                                    <div id="settingClosedBodyEn_editor"
+                                        class="min-h-[7rem] p-3 text-sm leading-relaxed focus:outline-none"
+                                        contenteditable="true"
+                                        spellcheck="false"></div>
+                                </div>
+
+                                <textarea id="settingClosedBodyEn" class="hidden"></textarea>
+    
                             </div>
                         </div>
 
@@ -538,16 +726,110 @@
                                 <div class="text-xs font-bold text-gray-500 uppercase tracking-widest">KO</div>
                                 <label class="text-[11px] font-bold text-gray-500 uppercase tracking-widest" data-i18n="setting_site_notice_title">Popup Title</label>
                                 <input type="text" id="settingSiteNoticeTitleKo" class="input-sharp" placeholder="...">
-                                <label class="text-[11px] font-bold text-gray-500 uppercase tracking-widest" data-i18n="setting_site_notice_body">Popup Body (HTML allowed)</label>
-                                <textarea id="settingSiteNoticeBodyKo" class="input-sharp h-32 resize-none"></textarea>
+                                <label class="text-[11px] font-bold text-gray-500 uppercase tracking-widest" data-i18n="setting_site_notice_body">Popup Body</label>
+                                                                <div class="mt-2 rounded-xl border border-gray-200 bg-white overflow-hidden">
+                                    <div class="flex flex-wrap items-center gap-2 px-3 py-2 border-b border-gray-100 bg-gray-50">
+                                        <button type="button"
+                                            class="px-2 py-1 text-xs font-semibold rounded-lg border border-gray-200 hover:bg-white transition"
+                                            data-rte-target="settingSiteNoticeBodyKo" data-rte-action="bold">
+                                            B
+                                        </button>
+
+                                        <div class="w-px h-5 bg-gray-200 mx-1"></div>
+
+                                        <label class="text-[11px] font-semibold text-gray-500">Size</label>
+                                        <select
+                                            class="text-xs rounded-lg border border-gray-200 px-2 py-1 bg-white"
+                                            data-rte-target="settingSiteNoticeBodyKo" data-rte-action="size">
+                                            <option value="">—</option>
+                                            <option value="12">12</option>
+                                            <option value="14">14</option>
+                                            <option value="16">16</option>
+                                            <option value="18">18</option>
+                                            <option value="20">20</option>
+                                            <option value="24">24</option>
+                                        </select>
+
+                                        <div class="w-px h-5 bg-gray-200 mx-1"></div>
+
+                                        <label class="text-[11px] font-semibold text-gray-500">Color</label>
+                                        <select
+                                            class="text-xs rounded-lg border border-gray-200 px-2 py-1 bg-white"
+                                            data-rte-target="settingSiteNoticeBodyKo" data-rte-action="color">
+                                            <option value="">—</option>
+                                            <option value="#111827">Black</option>
+                                            <option value="#6b7280">Gray</option>
+                                            <option value="#a16207">Brown</option>
+                                            <option value="#e11d48">Fenix</option>
+                                            <option value="#0284c7">PMDG</option>
+                                        </select>
+
+                                        <span class="text-[11px] text-gray-400 ml-auto select-none">Ctrl/Cmd + B supported</span>
+                                    </div>
+
+                                    <div id="settingSiteNoticeBodyKo_editor"
+                                        class="min-h-[7rem] p-3 text-sm leading-relaxed focus:outline-none"
+                                        contenteditable="true"
+                                        spellcheck="false"></div>
+                                </div>
+
+                                <textarea id="settingSiteNoticeBodyKo" class="hidden"></textarea>
+    
                             </div>
 
                             <div class="space-y-2">
                                 <div class="text-xs font-bold text-gray-500 uppercase tracking-widest">EN</div>
                                 <label class="text-[11px] font-bold text-gray-500 uppercase tracking-widest" data-i18n="setting_site_notice_title">Popup Title</label>
                                 <input type="text" id="settingSiteNoticeTitleEn" class="input-sharp" placeholder="...">
-                                <label class="text-[11px] font-bold text-gray-500 uppercase tracking-widest" data-i18n="setting_site_notice_body">Popup Body (HTML allowed)</label>
-                                <textarea id="settingSiteNoticeBodyEn" class="input-sharp h-32 resize-none"></textarea>
+                                <label class="text-[11px] font-bold text-gray-500 uppercase tracking-widest" data-i18n="setting_site_notice_body">Popup Body</label>
+                                                                <div class="mt-2 rounded-xl border border-gray-200 bg-white overflow-hidden">
+                                    <div class="flex flex-wrap items-center gap-2 px-3 py-2 border-b border-gray-100 bg-gray-50">
+                                        <button type="button"
+                                            class="px-2 py-1 text-xs font-semibold rounded-lg border border-gray-200 hover:bg-white transition"
+                                            data-rte-target="settingSiteNoticeBodyEn" data-rte-action="bold">
+                                            B
+                                        </button>
+
+                                        <div class="w-px h-5 bg-gray-200 mx-1"></div>
+
+                                        <label class="text-[11px] font-semibold text-gray-500">Size</label>
+                                        <select
+                                            class="text-xs rounded-lg border border-gray-200 px-2 py-1 bg-white"
+                                            data-rte-target="settingSiteNoticeBodyEn" data-rte-action="size">
+                                            <option value="">—</option>
+                                            <option value="12">12</option>
+                                            <option value="14">14</option>
+                                            <option value="16">16</option>
+                                            <option value="18">18</option>
+                                            <option value="20">20</option>
+                                            <option value="24">24</option>
+                                        </select>
+
+                                        <div class="w-px h-5 bg-gray-200 mx-1"></div>
+
+                                        <label class="text-[11px] font-semibold text-gray-500">Color</label>
+                                        <select
+                                            class="text-xs rounded-lg border border-gray-200 px-2 py-1 bg-white"
+                                            data-rte-target="settingSiteNoticeBodyEn" data-rte-action="color">
+                                            <option value="">—</option>
+                                            <option value="#111827">Black</option>
+                                            <option value="#6b7280">Gray</option>
+                                            <option value="#a16207">Brown</option>
+                                            <option value="#e11d48">Fenix</option>
+                                            <option value="#0284c7">PMDG</option>
+                                        </select>
+
+                                        <span class="text-[11px] text-gray-400 ml-auto select-none">Ctrl/Cmd + B supported</span>
+                                    </div>
+
+                                    <div id="settingSiteNoticeBodyEn_editor"
+                                        class="min-h-[7rem] p-3 text-sm leading-relaxed focus:outline-none"
+                                        contenteditable="true"
+                                        spellcheck="false"></div>
+                                </div>
+
+                                <textarea id="settingSiteNoticeBodyEn" class="hidden"></textarea>
+    
                             </div>
                         </div>
 
@@ -778,9 +1060,9 @@
                 setting_request_open: "Accept Requests",
                 setting_notice_enabled: "Enable Request Notice Popup",
                 setting_notice_title: "Notice Title",
-                setting_notice_body: "Notice Body (HTML allowed)",
+                setting_notice_body: "Notice Body",
                 setting_closed_title: "Closed Title",
-                setting_closed_body: "Closed Message (HTML allowed)",
+                setting_closed_body: "Closed Message",
                 btn_save_settings: "Save Settings",
 
                 // Cards
@@ -790,7 +1072,7 @@
                 // Site Notice Popup (NEW)
                 setting_site_notice_enabled: "Enable Site Notice Popup",
                 setting_site_notice_title: "Popup Title",
-                setting_site_notice_body: "Popup Body (HTML allowed)",
+                setting_site_notice_body: "Popup Body",
                 btn_publish_notice: "Publish Popup",
                 toast_notice_published: "Popup notice published.",
                 toast_notice_publish_fail: "Failed to publish popup notice: ",
@@ -897,9 +1179,9 @@
                 setting_request_open: "리버리 요청 받기",
                 setting_notice_enabled: "요청 안내 팝업 사용",
                 setting_notice_title: "안내 제목",
-                setting_notice_body: "안내 내용 (HTML 가능)",
+                setting_notice_body: "안내 내용",
                 setting_closed_title: "마감 제목",
-                setting_closed_body: "마감 안내 (HTML 가능)",
+                setting_closed_body: "마감 안내",
                 btn_save_settings: "설정 저장",
 
                 // Cards
@@ -1128,7 +1410,7 @@ window.renderRequestStatusPreview = (list) => {
             const filtered = (list || []).filter(x => x.status === tab);
 
             if (!filtered.length) {
-                wrap.innerHTML = `<div class="text-gray-400">${window.getText ? window.getText('req_status_loading') : 'No requests to show.'}</div>`;
+                wrap.innerHTML = `<div class="text-gray-400">${window.getText ? window.getText((Array.isArray(list) ? 'no_requests' : 'req_status_loading')) : (Array.isArray(list) ? 'No requests to show.' : 'Loading...')}</div>`;
                 return;
             }
 
@@ -1521,8 +1803,7 @@ window.openRequestNotice = async () => {
             }
 
             document.getElementById(id).classList.add('hidden');
-            document.getElementById(id).classList.remove('flex');
-            
+                        
             // Cleanups
             if (id === 'galleryModal') {
                 document.removeEventListener('keydown', window.handleGalleryKeys);
@@ -2244,7 +2525,14 @@ window.loginAdmin = async () => {
             if (siteNoticeOn) siteNoticeOn.checked = !!s.siteNoticeEnabled;
 
 
-            const setVal = (id, v) => { const el = document.getElementById(id); if (el) el.value = v || ""; };
+            const setVal = (id, v) => {
+                const el = document.getElementById(id);
+                if (!el) return;
+                el.value = v || "";
+                // If this is a rich-text backing textarea, also hydrate its editor.
+                const ed = document.getElementById(id + "_editor");
+                if (ed) ed.innerHTML = el.value || "";
+            };
             setVal("settingNoticeTitleKo", s.noticeTitle?.ko);
             setVal("settingNoticeBodyKo", s.noticeBody?.ko);
             setVal("settingClosedTitleKo", s.closedTitle?.ko);
@@ -2449,6 +2737,140 @@ if (!window.db || !window.doc || !window.setDoc) throw new Error("Firebase not r
         window.setLanguage('en'); // Initialize text on load (Fix for empty notice)
         loadLiveries();
         if (window.initSiteNotice) window.initSiteNotice();
-    </script>
+    
+
+        // --- Lightweight Rich Text Editor (Notice Body) ---
+        function setupNoticeRTE(textareaId) {
+            const ta = document.getElementById(textareaId);
+            const ed = document.getElementById(textareaId + "_editor");
+            if (!ta || !ed) return;
+
+            // Initial hydrate (in case value already exists)
+            ed.innerHTML = ta.value || "";
+
+            const syncToTextarea = () => {
+                ta.value = ed.innerHTML || "";
+            };
+
+            // Keep textarea synced on typing/paste
+            ed.addEventListener("input", syncToTextarea);
+            ed.addEventListener("blur", syncToTextarea);
+
+            // Simple sanitization-lite: prevent pasting rich external styles
+            ed.addEventListener("paste", (e) => {
+                e.preventDefault();
+                const text = (e.clipboardData || window.clipboardData).getData("text/plain");
+                document.execCommand("insertText", false, text);
+                syncToTextarea();
+            });
+
+            const focusEditor = () => {
+                ed.focus();
+                // If editor is empty, keep caret visible
+                if (ed.innerHTML === "") ed.innerHTML = "";
+            };
+
+            const insertStyledSpanAtCursor = (styleObj) => {
+                const sel = window.getSelection();
+                if (!sel || sel.rangeCount === 0) return;
+                const range = sel.getRangeAt(0);
+
+                const span = document.createElement("span");
+                Object.entries(styleObj).forEach(([k, v]) => (span.style[k] = v));
+
+                // Insert a zero-width space so future typing inherits styles
+                span.appendChild(document.createTextNode("\u200B"));
+                range.insertNode(span);
+
+                // Move caret inside span (after ZWSP)
+                const newRange = document.createRange();
+                newRange.setStart(span.firstChild, 1);
+                newRange.collapse(true);
+                sel.removeAllRanges();
+                sel.addRange(newRange);
+            };
+
+            const wrapSelectionWithSpan = (styleObj) => {
+                const sel = window.getSelection();
+                if (!sel || sel.rangeCount === 0) return;
+                const range = sel.getRangeAt(0);
+
+                if (range.collapsed) {
+                    insertStyledSpanAtCursor(styleObj);
+                    syncToTextarea();
+                    return;
+                }
+
+                const span = document.createElement("span");
+                Object.entries(styleObj).forEach(([k, v]) => (span.style[k] = v));
+
+                // Surround contents safely
+                try {
+                    range.surroundContents(span);
+                } catch (err) {
+                    const frag = range.extractContents();
+                    span.appendChild(frag);
+                    range.insertNode(span);
+                }
+
+                // Reselect styled content
+                sel.removeAllRanges();
+                const newRange = document.createRange();
+                newRange.selectNodeContents(span);
+                sel.addRange(newRange);
+
+                syncToTextarea();
+            };
+
+            // Toolbar actions (bold / size / color)
+            document.querySelectorAll('[data-rte-target="' + textareaId + '"]').forEach((el) => {
+                const action = el.getAttribute("data-rte-action");
+
+                if (action === "bold") {
+                    el.addEventListener("click", () => {
+                        focusEditor();
+                        document.execCommand("bold", false, null);
+                        syncToTextarea();
+                    });
+                }
+
+                if (action === "size") {
+                    el.addEventListener("change", () => {
+                        const v = el.value;
+                        if (!v) return;
+                        focusEditor();
+                        wrapSelectionWithSpan({ fontSize: v + "px" });
+                        // reset selector UI
+                        el.value = "";
+                    });
+                }
+
+                if (action === "color") {
+                    el.addEventListener("change", () => {
+                        const v = el.value;
+                        if (!v) return;
+                        focusEditor();
+                        wrapSelectionWithSpan({ color: v });
+                        el.value = "";
+                    });
+                }
+            });
+        }
+
+        // Initialize notice editors (safe to call multiple times)
+        function initNoticeRTE() {
+            setupNoticeRTE("settingNoticeBodyKo");
+            setupNoticeRTE("settingNoticeBodyEn");
+            setupNoticeRTE("settingSiteNoticeBodyKo");
+            setupNoticeRTE("settingSiteNoticeBodyEn");
+            setupNoticeRTE("settingClosedBodyKo");
+            setupNoticeRTE("settingClosedBodyEn");
+        }
+
+        // Run once after scripts load
+        setTimeout(initNoticeRTE, 0);
+    
+
+</script>
 </body>
 </html>
