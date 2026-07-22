@@ -27,6 +27,7 @@
                             500: '#3b82f6',
                             fenix: '#e11d48',
                             pmdg: '#0284c7',
+                            ifly: '#f59e0b',
                         }
                     }
                 }
@@ -231,7 +232,7 @@
         </div>
 
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-8 mb-12 border-b border-gray-100 pb-4">
-            <div class="flex gap-8">
+            <div class="flex flex-wrap gap-x-8 gap-y-4">
                 <button onclick="filterItems('all')" id="btn-all" class="filter-tab active font-logo text-sm tracking-widest text-gray-400 hover:text-black uppercase" data-i18n="filter_all">
                     ALL
                 </button>
@@ -243,6 +244,9 @@
                 </button>
                 <button onclick="filterItems('fenixA321')" id="btn-fenixA321" class="filter-tab font-logo text-sm tracking-widest text-gray-400 hover:text-brand-fenix uppercase">
                     FENIX A321
+                </button>
+                <button onclick="filterItems('ifly737max')" id="btn-ifly737max" class="filter-tab font-logo text-sm tracking-widest text-gray-400 hover:text-brand-ifly uppercase">
+                    IFLY 737MAX
                 </button>
             </div>
         </div>
@@ -881,6 +885,7 @@
                             <option value="pmdg738">PMDG 738</option>
                             <option value="fenixA320">FENIX A320</option>
                             <option value="fenixA321">FENIX A321</option>
+                            <option value="ifly737max">IFLY 737MAX</option>
                         </select>
                     </div>
                 </div>
@@ -1739,7 +1744,7 @@ window.openRequestNotice = async () => {
             // 3. Reset Selectors to Default
             document.getElementById('upSim').value = 'msfs2024';
             document.getElementById('upInstallType').value = 'manual';
-            document.getElementById('upCategory').value = 'pmdg';
+            document.getElementById('upCategory').value = 'pmdg738';
 
             // 4. Update UI Text (Upload Mode)
             const titleEl = document.querySelector('[data-i18n="modal_upload_title"]');
@@ -1829,7 +1834,7 @@ window.openRequestNotice = async () => {
         // Render Logic
         const grid = document.getElementById('liveryGrid');
         const emptyState = document.getElementById('emptyState');
-        const buttons = { all: document.getElementById('btn-all'), pmdg738: document.getElementById('btn-pmdg738'), fenixA320: document.getElementById('btn-fenixA320'), fenixA321: document.getElementById('btn-fenixA321') };
+        const buttons = { all: document.getElementById('btn-all'), pmdg738: document.getElementById('btn-pmdg738'), fenixA320: document.getElementById('btn-fenixA320'), fenixA321: document.getElementById('btn-fenixA321'), ifly737max: document.getElementById('btn-ifly737max') };
 
         window.renderLiveries = (data) => {
             // No global assignment here to prevent overwriting master data
@@ -1848,7 +1853,7 @@ window.openRequestNotice = async () => {
 
             data.forEach(item => {
                 const imageUrl = window.convertImageUrl(item.image);
-                const badgeColor = item.type === 'pmdg' ? 'text-brand-pmdg' : 'text-brand-fenix';
+                const badgeColor = window.inferCategory(item) === 'ifly737max' ? 'text-brand-ifly' : item.type === 'pmdg' ? 'text-brand-pmdg' : 'text-brand-fenix';
                 const card = document.createElement('div');
                 card.className = 'card-item group bg-white'; 
                 card.innerHTML = `
@@ -1883,9 +1888,17 @@ window.openRequestNotice = async () => {
 
         window.inferCategory = (item) => {
             // Backward compatibility for older docs without `category`
-            const t = item.type || '';
+            const t = (item.type || '').toLowerCase();
             const addon = (item.addon || '').toLowerCase();
             if (item.category) return item.category;
+            const isIfly737Max = addon.includes('ifly') && (
+                addon.includes('737 max') ||
+                addon.includes('737max') ||
+                addon.includes('737-max') ||
+                addon.includes('max 8') ||
+                addon.includes('max8')
+            );
+            if (t === 'ifly' || isIfly737Max) return 'ifly737max';
             if (t === 'pmdg') return 'pmdg738';
             if (t === 'fenix') {
                 if (addon.includes('a320')) return 'fenixA320';
@@ -1921,6 +1934,7 @@ window.openRequestNotice = async () => {
                 btn.classList.add('text-gray-400');
                 if (key === 'pmdg738') btn.classList.remove('text-brand-pmdg');
                 if (key === 'fenixA320' || key === 'fenixA321') btn.classList.remove('text-brand-fenix');
+                if (key === 'ifly737max') btn.classList.remove('text-brand-ifly');
             });
             buttons[type].classList.remove('text-gray-400');
             buttons[type].classList.add('active'); 
@@ -2138,7 +2152,7 @@ window.loginAdmin = async () => {
             const title = document.getElementById('upTitle').value;
             const addon = document.getElementById('upAddon').value;
             const category = document.getElementById('upCategory').value;
-            const type = category.startsWith('pmdg') ? 'pmdg' : 'fenix';
+            const type = category.startsWith('pmdg') ? 'pmdg' : category.startsWith('ifly') ? 'ifly' : 'fenix';
             const version = document.getElementById('upVersion').value;
             const link = document.getElementById('upLink').value;
             const image = document.getElementById('upImage').value;
