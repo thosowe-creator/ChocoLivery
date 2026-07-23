@@ -869,10 +869,56 @@
                 <!-- ADDED: Install Method Selector -->
                 <div>
                     <label class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1 block">Installation Method</label>
-                    <select id="upInstallType" class="input-sharp">
+                    <select id="upInstallType" class="input-sharp" onchange="switchInstallGuideType(this.value)">
                         <option value="manual">Drag & Drop (Community Folder)</option>
                         <option value="oc3">PMDG Operation Center 3 (.ptp)</option>
                     </select>
+                </div>
+                <div>
+                    <div class="flex items-end justify-between gap-3 mb-2">
+                        <label class="text-xs font-bold text-gray-500 uppercase tracking-widest block">Installation Guide</label>
+                        <span class="text-[10px] text-gray-400">The current default text is loaded automatically.</span>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="space-y-2">
+                            <div class="text-[11px] font-bold text-gray-500 uppercase tracking-widest">KO</div>
+                            <div class="rounded-xl border border-gray-200 bg-white overflow-hidden">
+                                <div class="flex flex-wrap items-center gap-2 px-3 py-2 border-b border-gray-100 bg-gray-50">
+                                    <button type="button" class="px-2 py-1 text-xs font-semibold rounded-lg border border-gray-200 hover:bg-white transition" data-rte-target="upInstallGuideKo" data-rte-action="bold">B</button>
+                                    <div class="w-px h-5 bg-gray-200 mx-1"></div>
+                                    <label class="text-[11px] font-semibold text-gray-500">Size</label>
+                                    <select class="text-xs rounded-lg border border-gray-200 px-2 py-1 bg-white" data-rte-target="upInstallGuideKo" data-rte-action="size">
+                                        <option value="">—</option><option value="12">12</option><option value="14">14</option><option value="16">16</option><option value="18">18</option><option value="20">20</option><option value="24">24</option>
+                                    </select>
+                                    <label class="text-[11px] font-semibold text-gray-500">Color</label>
+                                    <select class="text-xs rounded-lg border border-gray-200 px-2 py-1 bg-white" data-rte-target="upInstallGuideKo" data-rte-action="color">
+                                        <option value="">—</option><option value="#111827">Black</option><option value="#6b7280">Gray</option><option value="#a16207">Brown</option><option value="#e11d48">Fenix</option><option value="#0284c7">PMDG</option>
+                                    </select>
+                                </div>
+                                <div id="upInstallGuideKo_editor" class="min-h-[7rem] p-3 text-sm leading-relaxed focus:outline-none" contenteditable="true" spellcheck="false"></div>
+                            </div>
+                            <textarea id="upInstallGuideKo" class="hidden"></textarea>
+                        </div>
+                        <div class="space-y-2">
+                            <div class="text-[11px] font-bold text-gray-500 uppercase tracking-widest">EN</div>
+                            <div class="rounded-xl border border-gray-200 bg-white overflow-hidden">
+                                <div class="flex flex-wrap items-center gap-2 px-3 py-2 border-b border-gray-100 bg-gray-50">
+                                    <button type="button" class="px-2 py-1 text-xs font-semibold rounded-lg border border-gray-200 hover:bg-white transition" data-rte-target="upInstallGuideEn" data-rte-action="bold">B</button>
+                                    <div class="w-px h-5 bg-gray-200 mx-1"></div>
+                                    <label class="text-[11px] font-semibold text-gray-500">Size</label>
+                                    <select class="text-xs rounded-lg border border-gray-200 px-2 py-1 bg-white" data-rte-target="upInstallGuideEn" data-rte-action="size">
+                                        <option value="">—</option><option value="12">12</option><option value="14">14</option><option value="16">16</option><option value="18">18</option><option value="20">20</option><option value="24">24</option>
+                                    </select>
+                                    <label class="text-[11px] font-semibold text-gray-500">Color</label>
+                                    <select class="text-xs rounded-lg border border-gray-200 px-2 py-1 bg-white" data-rte-target="upInstallGuideEn" data-rte-action="color">
+                                        <option value="">—</option><option value="#111827">Black</option><option value="#6b7280">Gray</option><option value="#a16207">Brown</option><option value="#e11d48">Fenix</option><option value="#0284c7">PMDG</option>
+                                    </select>
+                                </div>
+                                <div id="upInstallGuideEn_editor" class="min-h-[7rem] p-3 text-sm leading-relaxed focus:outline-none" contenteditable="true" spellcheck="false"></div>
+                            </div>
+                            <textarea id="upInstallGuideEn" class="hidden"></textarea>
+                        </div>
+                    </div>
                 </div>
                 <div class="grid grid-cols-2 gap-4">
                     <div>
@@ -1224,11 +1270,9 @@
                 }
             });
 
-            // Re-Apply dynamic install text if modal is open
+            // Re-apply the selected livery's custom install guide if the modal is open.
             if(window.currentInstallType && !document.getElementById('downloadModal').classList.contains('hidden')) {
-                const descKey = window.currentInstallType === 'oc3' ? 'modal_install_desc_oc3' : 'modal_install_desc';
-                const el = document.querySelector('[data-i18n="modal_install_desc"]');
-                if(el) el.innerHTML = translations[lang][descKey];
+                if (window.applyCurrentInstallGuide) window.applyCurrentInstallGuide();
             }
 
             // Update Placeholders
@@ -1307,19 +1351,30 @@
         };
 
         // Modal Helpers
-        window.openLink = (link, installType = 'manual') => {
+        window.applyCurrentInstallGuide = () => {
+            const descKey = window.currentInstallType === 'oc3' ? 'modal_install_desc_oc3' : 'modal_install_desc';
+            const customGuide = window.currentInstallGuide?.[currentLang];
+            const installDescEl = document.querySelector('[data-i18n="modal_install_desc"]');
+            if (installDescEl) installDescEl.innerHTML = customGuide || window.getText(descKey);
+        };
+
+        window.openLink = (link, installType = 'manual', installGuide = null) => {
             if (!link) { showToast("toast_link_soon", "normal"); return; }
             window.currentLink = link;
             window.currentInstallType = installType; // Store for lang switch
+            window.currentInstallGuide = installGuide;
 
-            // Dynamic Install Text
-            const descKey = installType === 'oc3' ? 'modal_install_desc_oc3' : 'modal_install_desc';
-            const installDescEl = document.querySelector('[data-i18n="modal_install_desc"]');
-            if(installDescEl) installDescEl.innerHTML = window.getText(descKey);
+            window.applyCurrentInstallGuide();
 
             document.getElementById('downloadModal').classList.remove('hidden');
             document.body.style.overflow = 'hidden';
         }
+
+        window.openLiveryDownload = (id) => {
+            const item = window.liveryDownloadMap?.[id];
+            if (!item) return;
+            window.openLink(item.link, item.installType || 'manual', item.installGuide || null);
+        };
 
         // New function to show the notice first
         
@@ -1728,6 +1783,73 @@ window.openRequestNotice = async () => {
             input.value = '';
         }
 
+        window.getDefaultInstallGuide = (installType, lang) => {
+            const key = installType === 'oc3' ? 'modal_install_desc_oc3' : 'modal_install_desc';
+            return translations?.[lang]?.[key] || '';
+        };
+
+        window.setInstallGuideEditorValue = (lang, html) => {
+            const suffix = lang === 'ko' ? 'Ko' : 'En';
+            const textarea = document.getElementById(`upInstallGuide${suffix}`);
+            const editor = document.getElementById(`upInstallGuide${suffix}_editor`);
+            const value = html || '';
+            if (textarea) textarea.value = value;
+            if (editor) editor.innerHTML = value;
+        };
+
+        window.readInstallGuideEditors = () => {
+            const read = (suffix) => {
+                const editor = document.getElementById(`upInstallGuide${suffix}_editor`);
+                const textarea = document.getElementById(`upInstallGuide${suffix}`);
+                const value = editor ? editor.innerHTML : (textarea?.value || '');
+                if (textarea) textarea.value = value;
+                return value;
+            };
+            return { ko: read('Ko'), en: read('En') };
+        };
+
+        window.saveCurrentInstallGuideDraft = () => {
+            if (!window.currentInstallGuideEditorType) return;
+            window.installGuideDrafts[window.currentInstallGuideEditorType] = window.readInstallGuideEditors();
+        };
+
+        window.switchInstallGuideType = (installType) => {
+            const nextType = installType === 'oc3' ? 'oc3' : 'manual';
+            window.saveCurrentInstallGuideDraft();
+            if (!window.installGuideDrafts?.[nextType]) {
+                window.installGuideDrafts = window.installGuideDrafts || {};
+                window.installGuideDrafts[nextType] = {
+                    ko: window.getDefaultInstallGuide(nextType, 'ko'),
+                    en: window.getDefaultInstallGuide(nextType, 'en')
+                };
+            }
+            window.currentInstallGuideEditorType = nextType;
+            window.setInstallGuideEditorValue('ko', window.installGuideDrafts[nextType].ko);
+            window.setInstallGuideEditorValue('en', window.installGuideDrafts[nextType].en);
+        };
+
+        window.resetInstallGuideDrafts = (installType = 'manual', savedGuide = null) => {
+            window.installGuideDrafts = {
+                manual: {
+                    ko: window.getDefaultInstallGuide('manual', 'ko'),
+                    en: window.getDefaultInstallGuide('manual', 'en')
+                },
+                oc3: {
+                    ko: window.getDefaultInstallGuide('oc3', 'ko'),
+                    en: window.getDefaultInstallGuide('oc3', 'en')
+                }
+            };
+            const selectedType = installType === 'oc3' ? 'oc3' : 'manual';
+            if (savedGuide && typeof savedGuide === 'object') {
+                window.installGuideDrafts[selectedType] = {
+                    ko: savedGuide.ko || window.installGuideDrafts[selectedType].ko,
+                    en: savedGuide.en || window.installGuideDrafts[selectedType].en
+                };
+            }
+            window.currentInstallGuideEditorType = null;
+            window.switchInstallGuideType(selectedType);
+        };
+
         // Modified to handle "Reset" logic for new uploads
         window.openUploadModal = () => {
             // 1. Reset Global Edit ID
@@ -1745,6 +1867,7 @@ window.openRequestNotice = async () => {
             document.getElementById('upSim').value = 'msfs2024';
             document.getElementById('upInstallType').value = 'manual';
             document.getElementById('upCategory').value = 'pmdg738';
+            window.resetInstallGuideDrafts('manual');
 
             // 4. Update UI Text (Upload Mode)
             const titleEl = document.querySelector('[data-i18n="modal_upload_title"]');
@@ -1780,6 +1903,7 @@ window.openRequestNotice = async () => {
             document.getElementById('upSim').value = item.simulator || 'msfs2024'; // Default to 2024 if missing
             document.getElementById('upInstallType').value = item.installType || 'manual';
             document.getElementById('upCategory').value = (item.category || window.inferCategory(item)) || 'pmdg738';
+            window.resetInstallGuideDrafts(item.installType || 'manual', item.installGuide || null);
 
             // 4. Update UI Text (Edit Mode)
             const titleEl = document.querySelector('[data-i18n="modal_upload_title"]');
@@ -1840,6 +1964,7 @@ window.openRequestNotice = async () => {
             // No global assignment here to prevent overwriting master data
             // window.storedLiveries is now for reference if needed, but we mostly use window.masterLiveries with filtering
             window.storedLiveries = data;
+            window.liveryDownloadMap = Object.fromEntries((data || []).map(item => [item.id, item]));
 
             grid.innerHTML = '';
             if (!data || data.length === 0) {
@@ -1872,7 +1997,7 @@ window.openRequestNotice = async () => {
                             <span class="font-logo text-[10px] text-gray-400">${item.version || 'V1.0'}</span>
                         </div>
                         <h3 class="text-lg font-light text-black truncate mb-4">${item.title}</h3>
-                        <button onclick="openLink('${item.link}', '${item.installType || 'manual'}')" class="w-full border border-gray-200 h-10 flex items-center justify-center gap-2 hover:bg-black hover:text-white hover:border-black transition-all duration-300 group/btn">
+                        <button onclick="openLiveryDownload('${item.id}')" class="w-full border border-gray-200 h-10 flex items-center justify-center gap-2 hover:bg-black hover:text-white hover:border-black transition-all duration-300 group/btn">
                             <span class="font-logo text-[10px] tracking-[0.15em] uppercase font-medium">${window.getText('card_download')}</span>
                             <i class="fa-solid fa-arrow-down text-xs group-hover/btn:translate-y-0.5 transition-transform"></i>
                         </button>
@@ -2159,6 +2284,8 @@ window.loginAdmin = async () => {
             const moreLink = document.getElementById('upMoreLink').value;
             const simulator = document.getElementById('upSim').value;
             const installType = document.getElementById('upInstallType').value;
+            window.saveCurrentInstallGuideDraft();
+            const installGuide = window.installGuideDrafts?.[installType] || window.readInstallGuideEditors();
             
             const btn = document.getElementById('uploadBtn');
 
@@ -2173,7 +2300,7 @@ window.loginAdmin = async () => {
 
             try {
                 const dataPayload = {
-                    title, addon, type, category, version, link, image, moreLink, simulator, installType
+                    title, addon, type, category, version, link, image, moreLink, simulator, installType, installGuide
                 };
 
                 if (isEdit) {
@@ -2879,6 +3006,8 @@ if (!window.db || !window.doc || !window.setDoc) throw new Error("Firebase not r
             setupNoticeRTE("settingSiteNoticeBodyEn");
             setupNoticeRTE("settingClosedBodyKo");
             setupNoticeRTE("settingClosedBodyEn");
+            setupNoticeRTE("upInstallGuideKo");
+            setupNoticeRTE("upInstallGuideEn");
         }
 
         // Run once after scripts load
